@@ -1,5 +1,5 @@
 # WebMonitor
-Monitor values the web, and get emailed when then change.
+Monitor values on the web, and get emailed when then change.
 
 - Set a custom check interval
 - Query values with `RegExp` or `document.querySelector`
