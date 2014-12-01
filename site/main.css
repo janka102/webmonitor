@@ -1,0 +1,10 @@
+body {
+    font-family: sans-serif;
+}
+.form-field {
+    padding: 25px;
+    font-size: 18px;
+}
+label {
+    display: block;
+}

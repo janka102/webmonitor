@@ -1,0 +1,20 @@
+{
+  "name": "webmonitor",
+  "version": "0.1.0",
+  "author": "Jesse Smick",
+  "dependencies": {
+    "bluebird": "~2.3.11",
+    "body-parser": "~1.4.3",
+    "compression": "~1.0.11",
+    "express": "~4.6.1",
+    "later": "~1.1.6",
+    "morgan": "~1.1.1",
+    "node-schedule": "~0.1.13",
+    "nodemailer": "~1.3.0",
+    "phridge": "~1.0.7",
+    "tingodb": "~0.3.1"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}

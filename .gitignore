@@ -1,0 +1,14 @@
+# Mac
+.DS_Store
+
+# Node
+node_modules/
+
+## Keep personal info secret
+user.json
+
+## File-based DB
+monitor/**
+
+## Keep all .gitkeep files
+!/**/.gitkeep
