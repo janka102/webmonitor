@@ -7,7 +7,7 @@ var dayInputs = document.getElementById('dayPicker').getElementsByTagName('input
 
 
 forEach(dayInputs, function(input) {
-    input.addEventListener('click', getInterval, false);
+    input.addEventListener('click', updateTime, false);
 });
 
 forEach(timeInputs, function(input) {
@@ -19,15 +19,15 @@ forEach(timeInputs, function(input) {
 
         if (value >= min && value <= max) {
             el.value = value;
-            getInterval();
+            updateTime();
         } else {
             el.value = '';
-            getInterval();
+            updateTime();
         }
     }, false);
 });
 
-getInterval();
+updateTime();
 
 form.addEventListener('submit', function(event) {
     event.preventDefault();
@@ -38,7 +38,7 @@ form.addEventListener('submit', function(event) {
         });
 });
 
-function getInterval() {
+function updateTime() {
     var days = [],
         times = '';
 
