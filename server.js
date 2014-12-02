@@ -28,7 +28,7 @@ try {
         user.domain += ':' + port;
     }
 } catch (e) {
-    console.error('Create a user.json with {"service": "SERVICE", "user": "USERNAME", "pass": "PASSWORD", "email": "FROM_EMAIL"}');
+    console.error('Create a user.json with {"service": "SERVICE", "user": "USERNAME", "pass": "PASSWORD", "email": "FROM_EMAIL", "domain":"YOUR_DOMAIN"}');
     throw e;
 }
 
