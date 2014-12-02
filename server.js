@@ -4,10 +4,12 @@ var express = require('express'),
     morgan = require('morgan'),
     compression = require('compression'),
     bodyParser = require('body-parser'),
+    swig = require('swig'),
 
     path = require('path'),
-    jobs = require('./jobs'),
-    port = parseInt(process.env.PORT || 3000);
+    util = require('util'),
+    config = require('./config'),
+    jobs = require('./jobs');
 
 // Append port to the users domain
 // Also console specific error if the file doesn't exist
@@ -24,8 +26,8 @@ try {
         user.domain = user.domain.slice(0, -1);
     }
 
-    if (port !== 80 && port !== 443) {
-        user.domain += ':' + port;
+    if (config.port !== 80 && config.port !== 443) {
+        user.domain += ':' + config.port;
     }
 } catch (e) {
     console.error('Create a user.json with {"service": "SERVICE", "user": "USERNAME", "pass": "PASSWORD", "email": "FROM_EMAIL", "domain":"YOUR_DOMAIN"}');
@@ -41,24 +43,40 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'views'));
+
 // Public files
-app.use(express.static(path.join(__dirname, 'site')));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', function(req, res) {
+    res.render('index', {
+        dev: config.dev
+    });
+});
 
 app.post('/monitor', function(req, res) {
     console.log('Body:', req.body);
-    
+
     jobs.create(req.body).then(function(job) {
         res.send(job);
     });
 });
 
-app.get('/stop/:id', function(req, res) {
-    // TODO: implement removing jobs
+app.get('/stop/:key', function(req, res) {
+    jobs.findOne({
+        stopKey: req.params.key
+    }).then(function(job) {
+        res.render('stop', {
+            job: job
+        });
+    });
 });
 
 // Open the port for business
-app.listen(port, function() {
-    console.log('Now running on port %d', port);
+app.listen(config.port, function() {
+    console.log('Now running on port %d', config.port);
 });
 
-jobs.startAll();
+// jobs.startAll();
