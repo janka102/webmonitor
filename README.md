@@ -10,9 +10,10 @@ Create a file called `user.json` in the root directory. This will contain data f
 ```json
 {
     "service": "ex. Gmail or SendGrid",
-    "user": "username for the 'service'",
-    "pass": "password for the 'service'",
-    "email": "email to send FROM"
+    "user": "username for the service",
+    "pass": "password for the service",
+    "email": "email to send FROM",
+    "domain": "used in the emails - ex. 'localhost' or 'http://example.com'"
 }
 ```
 
