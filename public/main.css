@@ -1,0 +1,102 @@
+html {
+    font-size: 18px;
+}
+body {
+    font-family: Roboto, sans-serif;
+    background-color: #fff;
+    margin: 0;
+    padding: 2rem;
+    color: #333;
+}
+h1 {
+    font-size: 2rem;
+    background-color: #0ad;
+    padding: 1em;
+    margin: -1em -1em auto;
+    color: #fff;
+}
+h1 small {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 0.6em;
+    color: #eee;
+}
+h2 {
+    font-weight: 400;
+    border-bottom: 1px solid #ccc;
+    padding: 0 5px;
+}
+.form-field {
+    display: block;
+    margin: 2rem 0;
+}
+.field-title {
+    margin-bottom: 0.25em;
+    font-size: 0.9rem;
+    display: block;
+}
+.form-field input, .form-field select {
+    display: inline-block;
+}
+input, select {
+    color: #333;
+    font-size: 0.75rem;
+    padding: 0.4em;
+    border-style: solid;
+    border-width: 0;
+    border-color: #aaa;
+    border-bottom-width: 1px;
+    transition: border 333ms;
+    background-color: #fff;
+}
+select {
+    border-width: 1px;
+}
+input:focus, select:focus {
+    border-color: #0ad;
+    outline: none;
+}
+input[type="text"], input[type="url"], input[type="email"] {
+    width: 18em;
+}
+input[type="number"] {
+    width: 2.5em;
+}
+input[type="checkbox"] {
+    outline: auto;
+}
+.picker input {
+    margin: 0.4em auto;
+    display: block;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+ul li {
+    display: inline-block;
+    text-align: center;
+    padding: 5px;
+    min-width: 40px;
+    min-height: 40px;
+    margin: 0 2.5px;
+}
+#submit {
+    font-size: 1rem;
+    padding: 0.5em 0.75em;
+    background-color: #fff;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    border-radius: 3px;
+    transition: background-color 333ms;
+}
+#submit:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+#submit:active, #submit:focus {
+    outline: none;
+    background-color: #ddd;
+}
