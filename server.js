@@ -52,6 +52,10 @@ app.post('/monitor', function(req, res) {
     });
 });
 
+app.get('/stop/:id', function(req, res) {
+    // TODO: implement removing jobs
+});
+
 // Open the port for business
 app.listen(port, function() {
     console.log('Now running on port %d', port);

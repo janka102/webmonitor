@@ -29,11 +29,12 @@ var Promise = require('bluebird'),
 exports.send = function(job, oldValue, newValue) {
     return sendMail({
         from: user.email,
-        to: email,
-        subject: util.format(mailOptions.subject, name),
+        to: job.email,
+        subject: util.format(mailOptions.subject, job.name),
         html: formatEmail(job, oldValue, newValue)
     }).then(function(info) {
-        console.log('Sent an email to %s for their "%s"', email, name);
+        console.log('Sent an email to %s for their "%s"', job.email, job.name);
+        console.log(info);
     });
 }
 
