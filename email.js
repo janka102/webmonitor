@@ -41,23 +41,28 @@ sendMail = function(options) {
     });
 };
 
-exports.send = function(name, email, url, oldValue, newValue) {
+exports.send = function(job, oldValue, newValue) {
     return sendMail({
         from: user.email,
         to: email,
         subject: util.format(mailOptions.subject, name),
-        html: util.format(
-            mailOptions.html,
-            escapeHTML(name),
-            escapeHTML(url),
-            escapeHTML(oldValue),
-            escapeHTML(newValue),
-            (Math.random() * 100) | 0 // So Gmail doesn't see the last bit of the email as the same and hide it
-            // TODO: Find a better way than putting a hidden random number in the email
-        )
+        html: formatEmail(job, oldValue, newValue)
     }).then(function(info) {
         console.log('Sent an email to %s for their "%s"', email, name);
     });
+}
+
+function formatEmail(job, oldValue, newValue) {
+    return util.format(
+        mailOptions.html,
+        escapeHTML(job.name),
+        job.url,
+        escapeHTML(job.url),
+        escapeHTML(oldValue),
+        escapeHTML(newValue),
+        user.domain,
+        job.stopKey
+    )
 }
 
 function escapeHTML(string) {

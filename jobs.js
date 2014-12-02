@@ -71,7 +71,7 @@ exports.pushValue = function update(job, newValue) {
 
             if (dbJob.values.length) {
                 // console.log('Gonna send an email!');
-                email.send(job.name, job.email, job.url, oldValue, newValue);
+                email.send(job, oldValue, newValue);
             }
         } else {
             console.log('%s had same value, old: "%s", new: "%s"', job.name, oldValue, newValue);
