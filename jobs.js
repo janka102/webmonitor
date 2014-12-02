@@ -2,6 +2,7 @@ var Promise = require('bluebird'),
     later = require('later'),
     phridge = require('phridge'),
     crypto = require('crypto'),
+
     db = new(require('tingodb')()).Db('./monitor', {}),
     jobs = db.collection('jobs'),
     email = require('./email'),
@@ -45,17 +46,26 @@ function createInterval(job) {
     };
 }
 
+exports.findOne = function update(criteria, projection) {
+    var args = Array.prototype.slice.call(arguments);
+
+    return new Promise(function(resolve, reject) {
+        jobs.findOne.apply(jobs, args.concat([function(err, job) {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(job);
+        }]));
+    });
+};
+
 exports.pushValue = function update(job, newValue) {
-    jobs.findOne({
+    exports.findOne({
         _id: job._id
     }, {
         values: 1
-    }, function(err, dbJob) {
-        if (err) {
-            console.log('pushValue() findOne error:', err);
-            return;
-        }
-
+    }).then(function(dbJob) {
         // var oldValue = (dbJob.values.slice(-1)[0] || {}).value;
         var oldValue = dbJob.values.slice(-1)[0];
 
@@ -77,6 +87,8 @@ exports.pushValue = function update(job, newValue) {
         } else {
             console.log('%s had same value, old: "%s", new: "%s"', job.name, oldValue, newValue);
         }
+    }, function(err) {
+        console.log('pushValue() findOne error:', err);
     });
 };
 
