@@ -7,8 +7,32 @@ var express = require('express'),
 
     path = require('path'),
     jobs = require('./jobs'),
-    port = process.env.PORT || 3000;
+    port = parseInt(process.env.PORT || 3000);
 
+// Append port to the users domain
+// Also console specific error if the file doesn't exist
+try {
+    var user = require('./user.json');
+
+    if (!(user.service && user.user && user.pass && user.email && user.domain)) {
+        // File does not have all/any required values
+        throw new Error();
+    }
+
+    // Remove any trailing slash
+    if (user.domain.slice(-1) === '/') {
+        user.domain = user.domain.slice(0, -1);
+    }
+
+    if (port !== 80 && port !== 443) {
+        user.domain += ':' + port;
+    }
+} catch (e) {
+    console.error('Create a user.json with {"service": "SERVICE", "user": "USERNAME", "pass": "PASSWORD", "email": "FROM_EMAIL"}');
+    throw e;
+}
+
+// Setup the server
 app.use(compression());
 
 app.use(morgan('dev'));
