@@ -1,6 +1,7 @@
 var Promise = require('bluebird'),
     later = require('later'),
     phridge = require('phridge'),
+    crypto = require('crypto'),
     db = new(require('tingodb')()).Db('./monitor', {}),
     jobs = db.collection('jobs'),
     email = require('./email'),
@@ -120,6 +121,7 @@ exports.create = function create(body) {
             mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query', // Default to query
             selector: body.selector
         };
+        job.stopKey = crypto.randomBytes(16).toString('hex');
 
         // Setup the schedule
         if (hours > 0) {
