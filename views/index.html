@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>WebMonitor</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <h1>WebMonitor
+            <small>Monitor values on the web, and get emailed when they change</small>
+        </h1>
+    <h2>Submit a value to monitor</h2>
+
+    <form name="schedule" action="/monitor" method="post">
+        <div class="form-field">
+            <label>
+                <span class="field-title">Title</span>
+                <input name="name" type="text" placeholder="My Awesome Value" required>
+            </label>
+        </div>
+        <div class="form-field">
+            <label>
+                <span class="field-title">URL</span>
+                <input name="url" type="url" placeholder="http://example.com" required>
+            </label>
+        </div>
+        <div class="form-field">
+            <span class="field-title">Interval</span>
+            <div class="picker">
+                <ul id="dayPicker">
+                    <li>
+                        <label>
+                            Sun
+                            <input id="sunday" name="sunday" type="checkbox">
+                            <label for="sunday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Mon
+                            <input id="monday" name="monday" type="checkbox">
+                            <label for="monday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Tue
+                            <input id="tuesday" name="tuesday" type="checkbox">
+                            <label for="tuesday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Wed
+                            <input id="wednesday" name="wednesday" type="checkbox">
+                            <label for="wednesday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Thu
+                            <input id="thursday" name="thursday" type="checkbox">
+                            <label for="thursday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Fri
+                            <input id="friday" name="friday" type="checkbox">
+                            <label for="friday"></label>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Sat
+                            <input id="saturday" name="saturday" type="checkbox">
+                            <label for="saturday"></label>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+            <div class="picker">
+                <ul id="timePicker">
+                    <li>
+                        <label>
+                            Hours
+                            <input name="hours" type="number" min="0" max="23" value="0">
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            Minutes
+                            <input name="minutes" type="number" min="0" max="59" value="25">
+                        </label>
+                    </li>{% if dev %}
+                    <li>
+                        <label>
+                            Seconds
+                            <input name="seconds" type="number" min="0" max="59" value="0">
+                        </label>
+                    </li>{% endif %}
+                </ul>
+            </div>
+            <span id="intervalDisplay"></span>
+        </div>
+        <div class="form-field">
+            <label>
+                <span class="field-title">Selector Mode</span>
+                <select name="mode">
+                    <option value="query">Query Selector</option>
+                    <option value="regex">Regular Expressions</option>
+                </select>
+            </label>
+        </div>
+        <div class="form-field">
+            <label>
+                <span class="field-title">Selector</span>
+                <input name="selector" type="text" placeholder="#some-query or som(e)R\1gExp?" required>
+            </label>
+        </div>
+        <div class="form-field">
+            <label>
+                <span class="field-title">Your email</span>
+                <input name="email" type="email" placeholder="user@example.com" required>
+            </label>
+        </div>
+
+        <button id="submit" type="submit">Monitor</button>
+    </form>
+
+    <script src="atomic.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
