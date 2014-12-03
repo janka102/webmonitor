@@ -197,3 +197,38 @@ exports.startAll = function startAll() {
         }
     });
 };
+
+function getValueType(value) {
+    var out = {
+            type: ''
+        },
+        currencySymbol;
+
+    value = value.trim();
+
+    if (!value.length) {
+        out.type = 'string';
+    } else if (!isNaN(Number(value))) {
+        out.type = 'number';
+    } else if (currencySymbol = value.match(/^[$€£¥]|[$€£¥]$/)) {
+        out.type = 'currency';
+
+        if (value.indexOf(currencySymbol[0]) === 0) {
+            currencySymbol = '^\\' + currencySymbol[0];
+        } else {
+            currencySymbol = '\\' + currencySymbol[0] + '$';
+        }
+
+        out.symbol = currencySymbol;
+    } else {
+        try {
+            JSON.parse(value);
+
+            out.type = 'json';
+        } catch (e) {
+            out.type = 'string';
+        }
+    }
+
+    return out;
+}
