@@ -43,6 +43,10 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+swig.setDefaults({
+    cache: config.dev ? false : 'memory'
+});
+
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
