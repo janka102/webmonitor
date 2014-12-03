@@ -79,4 +79,4 @@ app.listen(config.port, function() {
     console.log('Now running on port %d', config.port);
 });
 
-// jobs.startAll();
+jobs.startAll();
