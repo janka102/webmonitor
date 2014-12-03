@@ -1,10 +1,7 @@
 var Promise = require('bluebird'),
     nodemailer = require('nodemailer'),
+    swig = require('swig'),
     util = require('util'),
-    mailOptions = {
-        subject: 'WebMonitor - %s',
-        html: require('fs').readFileSync('./views/email.html').toString()
-    },
     user = require('./user.json'),
     transporter = nodemailer.createTransport({
         service: user.service,
@@ -27,10 +24,11 @@ var Promise = require('bluebird'),
     };
 
 exports.send = function(job, oldValue, newValue) {
+    // return formatEmail(job, oldValue, newValue);
     return sendMail({
         from: user.email,
         to: job.email,
-        subject: util.format(mailOptions.subject, job.name),
+        subject: 'WebMonitor - ' + job.name,
         html: formatEmail(job, oldValue, newValue)
     }).then(function(info) {
         console.log('Sent an email to %s for their "%s"', job.email, job.name);
@@ -39,17 +37,12 @@ exports.send = function(job, oldValue, newValue) {
 }
 
 function formatEmail(job, oldValue, newValue) {
-    return util.format(
-        mailOptions.html,
-        escapeHTML(job.name),
-        job.url,
-        escapeHTML(job.url),
-        escapeHTML(oldValue),
-        escapeHTML(newValue),
-        user.domain,
-        user.domain,
-        job.stopKey
-    )
+    return swig.renderFile('./views/email.html', {
+        job: job,
+        oldValue: oldValue,
+        newValue: newValue,
+        domain: user.domain
+    });
 }
 
 function escapeHTML(string) {
