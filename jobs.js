@@ -6,6 +6,7 @@ var Promise = require('bluebird'),
     db = new(require('tingodb')()).Db('./monitor', {}),
     jobs = db.collection('jobs'),
     email = require('./email'),
+    config = require('./config'),
     runningJobs = {};
 
 function createInterval(job) {
@@ -144,7 +145,7 @@ exports.create = function create(body) {
             schedule = schedule.every(minutes).minute();
         }
 
-        if (seconds > 0) {
+        if (config.dev && seconds > 0) {
             schedule = schedule.every(seconds).second();
         }
 
