@@ -92,7 +92,7 @@ select, button {
     font-family: inherit;
 }
 input:focus, select:focus {
-    border-color: #26A69A;
+    border-color: #009688;
     outline: none;
 }
 input[type="text"], input[type="url"], input[type="email"] {
@@ -136,7 +136,7 @@ input.no-text:focus + label::after {
     color: #BDBDBD;
 }
 input:focus + label {
-    color: #26A69A;
+    color: #009688;
 }
 input:focus + label::before, input.has-text + label::before {
     top: 0;
