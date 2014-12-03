@@ -4,7 +4,24 @@ var dayInputs = document.getElementById('dayPicker').getElementsByTagName('input
     form = document.forms.schedule,
     submit = document.getElementById('submit')
 
+forEach(document.querySelectorAll('input + label[data-title]'), function(el) {
+    function input(event) {
+        var self = event.target;
 
+        if (self.value.length) {
+            self.classList.add('has-text');
+            self.classList.remove('no-text');
+        } else {
+            self.classList.remove('has-text');
+            self.classList.add('no-text');
+        }
+    }
+    
+    el.previousElementSibling.addEventListener('input', input);
+    input({
+        target: el.previousElementSibling
+    });
+});
 
 forEach(dayInputs, function(input) {
     input.addEventListener('click', updateTime, false);
