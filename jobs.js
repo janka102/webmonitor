@@ -113,6 +113,14 @@ exports.stop = function stop(job) {
     console.log('Stopped', job.name);
 };
 
+exports.remove = function remove(job) {
+    exports.stop(job);
+
+    return jobs.remove({
+        _id: job._id
+    }, true);
+};
+
 // Create and insert a job into the DB
 exports.create = function create(body) {
     return new Promise(function(resolve, reject) {
@@ -134,7 +142,7 @@ exports.create = function create(body) {
             mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query', // Default to query
             selector: body.selector
         };
-        job.stopKey = crypto.randomBytes(16).toString('hex');
+        job.id = crypto.randomBytes(16).toString('hex');
 
         // Setup the schedule
         if (hours > 0) {
