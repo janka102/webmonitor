@@ -68,12 +68,25 @@ app.post('/monitor', function(req, res) {
     });
 });
 
-app.get('/stop/:key', function(req, res) {
+app.route('/stop/:id').get(function(req, res) {
+    for (prop in jobs) {
+        console.log(prop);
+    }
     jobs.findOne({
-        stopKey: req.params.key
+        id: req.params.id
     }).then(function(job) {
         res.render('stop', {
-            job: job
+            job: job,
+            domain: user.domain
+        });
+    }, function(err) {
+        res.render('404', {
+            error: {
+                name: 'Not found',
+                title: 'Could not find specified monitor value',
+                description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
+            },
+            domain: user.domain
         });
     });
 }).post(function(req, res) {
