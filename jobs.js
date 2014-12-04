@@ -52,8 +52,8 @@ exports.findOne = function update(criteria, projection) {
 
     return new Promise(function(resolve, reject) {
         jobs.findOne.apply(jobs, args.concat([function(err, job) {
-            if (err) {
-                return reject(err);
+            if (err || !job) {
+                return reject(err || new Error('Job not found'));
             }
 
             resolve(job);
