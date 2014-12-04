@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>WebMonitor - {{ error.name }}</title>
+    <link rel="stylesheet" href="/main.css">
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>
+                WebMonitor
+                <small>Monitor values on the web, and get emailed when they change</small>
+            </h1>
+        </header>
+        <div class="container">
+            <h2>{{ error.title }}</h2>
+            <p>
+                {{ error.description|safe }}
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <a href="{{ domain|safe }}">Monitor more values</a> •
+            <a href="https://www.github.com/janka102/webmonitor">Source on GitHub</a>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -76,6 +76,15 @@ app.get('/stop/:key', function(req, res) {
             job: job
         });
     });
+// Catch-all/404
+app.get('*', function(req, res) {
+    res.render('404', {
+        error: {
+            name: 'Not Found',
+            title: '404 - Page not found',
+            description: 'The page at <b>' + req.path + '</b> was not found. Go <a href="' + user.domain + '">home</a>.'
+        }
+    })
 });
 
 // Open the port for business
