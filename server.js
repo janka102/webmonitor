@@ -76,6 +76,20 @@ app.get('/stop/:key', function(req, res) {
             job: job
         });
     });
+}).post(function(req, res) {
+    jobs.findOne({
+        id: req.params.id
+    }).then(function(job) {
+        jobs.remove(job);
+
+        res.status(200).end();
+    }, function(err) {
+        res.status(404).end(JSON.stringify({
+            error: err
+        }));
+    });
+});
+
 // Catch-all/404
 app.get('*', function(req, res) {
     res.render('404', {

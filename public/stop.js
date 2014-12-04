@@ -3,11 +3,10 @@ var stop = document.getElementById('stop'),
 
 stop.addEventListener('click', function(event) {
     atomic.post(window.location.pathname)
-        .success(function(text) {
+        .success(function() {
             dialog.querySelector('.spinner').style.display = 'none';
 
             dialog.querySelector('.message').textContent = '✔ Done';
-            console.log('From server:', text);
         })
         .error(function(err) {
             console.log(err);
