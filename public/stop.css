@@ -1,3 +1,22 @@
-body {
-    font-family: sans-serif;
+#stop {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    background-color: #F44336;
+    border: none;
+    border-bottom: 2px solid #C62828;
+    border-radius: 3px;
+    transition: background-color 250ms;
+    color: #FFF;
+}
+#stop:hover, #stop:focus {
+    cursor: pointer;
+    background-color: #E53935;
+}
+#stop:active {
+    background-color: #C62828;
+}
+#stop:disabled {
+    background-color: #BDBDBD;
+    border-style: none;
+    cursor: default;
 }
