@@ -42,6 +42,26 @@ app.get('/', function(req, res) {
     });
 });
 
+app.get('/list', function(req, res) {
+    jobs.find().toArray(function(err, array) {
+        if (err) {
+            console.error('Find error:', err);
+            return;
+        }
+
+        // Only get last value
+        array.map(function(item) {
+            item.values = item.values.slice(-1);
+
+            return item; 
+        });
+
+        res.render('list.html', {
+            jobs: array
+        });
+    });
+});
+
 app.post('/monitor', function(req, res) {
     jobs.create(req.body).then(function(job) {
         res.send(200);

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>WebMonitor - List</title>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/list.css">
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>
+                WebMonitor
+                <small>Monitor values on the web, and get emailed when they change</small>
+            </h1>
+        </header>
+        <div class="container">
+            <h2>All monitored values</h2>
+            <ul class="monitor-list">
+                {% for job in jobs %}
+                <li>
+                    <h3>{{ job.title }}</h3>
+                    <a href="{{ job.url|safe }}" class="monitor-url">{{ job.url }}</a>
+                    <a href="{{ domain }}/stop/{{ job.id }}" class="manage-link">Stop</a>
+                    {# <a href="{{ domain }}/manage/{{ job.id }}" class="manage-link">Manage</a> #}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <a href="{{ domain|safe }}">Monitor more values</a> •
+            <a href="https://www.github.com/janka102/webmonitor">Source on GitHub</a>
+        </div>
+    </footer>
+
+    <script src="/atomic.min.js"></script>
+    <script src="/stop.js"></script>
+</body>
+
+</html>
