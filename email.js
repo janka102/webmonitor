@@ -49,7 +49,7 @@ function formatEmail(job, oldValue, newValue) {
         job: job,
         oldValue: oldValue,
         newValue: newValue,
-        domain: user.domain
+        domain: config.domain
     });
 }
 
