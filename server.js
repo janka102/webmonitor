@@ -19,7 +19,7 @@ if (config.port !== 80 && config.port !== 443) {
 // Setup the server
 app.use(compression());
 
-app.use(morgan('dev'));
+app.use(morgan(config.dev ? 'dev' : 'tiny'));
 
 app.use(bodyParser.urlencoded({
     extended: false
