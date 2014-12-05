@@ -16,7 +16,7 @@ forEach(document.querySelectorAll('input + label[data-title]'), function(el) {
             self.classList.add('no-text');
         }
     }
-    
+
     el.previousElementSibling.addEventListener('input', input);
     input({
         target: el.previousElementSibling
@@ -106,7 +106,7 @@ function serialize(form) {
 
             if (field.name && field.type !== 'file' && field.type !== 'reset') {
                 if (field.type == 'select-multiple') {
-                    for (var j = 0, optLen = form.elements[i].options.length, option; j < optLen; j++) {
+                    for (var j = 0, optLen = field.options.length, option; j < optLen; j++) {
                         option = field.options[j];
 
                         if (option.selected) {
