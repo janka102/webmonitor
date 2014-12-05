@@ -43,10 +43,8 @@ app.get('/', function(req, res) {
 });
 
 app.post('/monitor', function(req, res) {
-    console.log('Body:', req.body);
-
     jobs.create(req.body).then(function(job) {
-        res.send(job);
+        res.send(200);
     });
 });
 
