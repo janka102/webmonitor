@@ -50,40 +50,39 @@ app.post('/monitor', function(req, res) {
     });
 });
 
-app.route('/stop/:id').get(function(req, res) {
-    for (prop in jobs) {
-        console.log(prop);
-    }
-    jobs.findOne({
-        id: req.params.id
-    }).then(function(job) {
-        res.render('stop', {
-            job: job,
-            domain: user.domain
+app.route('/stop/:id')
+    .get(function(req, res) {
+        jobs.findOne({
+            id: req.params.id
+        }).then(function(job) {
+            res.render('stop', {
+                job: job,
+                domain: config.domain
+            });
+        }, function(err) {
+            res.render('404', {
+                error: {
+                    name: 'Not found',
+                    title: 'Could not find specified monitor value',
+                    description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
+                },
+                domain: config.domain
+            });
         });
-    }, function(err) {
-        res.render('404', {
-            error: {
-                name: 'Not found',
-                title: 'Could not find specified monitor value',
-                description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
-            },
-            domain: user.domain
-        });
-    });
-}).post(function(req, res) {
-    jobs.findOne({
-        id: req.params.id
-    }).then(function(job) {
-        jobs.remove(job);
+    })
+    .post(function(req, res) {
+        jobs.findOne({
+            id: req.params.id
+        }).then(function(job) {
+            jobs.remove(job);
 
-        res.status(200).end();
-    }, function(err) {
-        res.status(404).end(JSON.stringify({
-            error: err
-        }));
+            res.send(200);
+        }, function(err) {
+            res.status(404).end(JSON.stringify({
+                error: err
+            }));
+        });
     });
-});
 
 // Catch-all/404
 app.get('*', function(req, res) {
