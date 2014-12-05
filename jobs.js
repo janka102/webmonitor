@@ -9,111 +9,38 @@ var Promise = require('bluebird'),
     config = require('./config'),
     runningJobs = {};
 
-function createInterval(job) {
-    return function() {
-        phridge.spawn()
-            .then(function(phantom) {
-                return phantom.openPage(job.url);
-            })
-            .then(function(page) {
-                return page.run(job.pageQuery, function(pageQuery) {
-                    // Here we're inside PhantomJS, so we can't reference variables in the scope
-
-                    // 'this' is an instance of PhantomJS' WebPage
-                    return this.evaluate(function(pageQuery) {
-                        // Here we're *deeper* inside PhantomJS, so we can't reference variables in the scope
-                        var search;
-
-                        if (pageQuery.mode === 'query') {
-                            search = document.querySelector(pageQuery.selector).textContent;
-                        } else if (pageQuery.mode === 'regex') {
-                            search = document.body.innerText.match(new RegExp(pageQuery.selector));
-                        }
-
-                        return search;
-                    }, pageQuery);
-                });
-            })
-            .finally(phridge.dispose)
-            .done(function(newValue) {
-                console.log('Job %s returned: "%s"', job.name, newValue);
-
-                exports.pushValue(job, newValue);
-            }, function(err) {
-                console.error('pantom error', err);
-
-                // throw err;
-            });
-    };
-}
-
-exports.findOne = function update(criteria, projection) {
-    var args = Array.prototype.slice.call(arguments);
-
-    return new Promise(function(resolve, reject) {
-        jobs.findOne.apply(jobs, args.concat([function(err, job) {
-            if (err || !job) {
-                return reject(err || new Error('Job not found'));
-            }
-
-            resolve(job);
-        }]));
-    });
-};
-
-exports.pushValue = function update(job, newValue) {
-    exports.findOne({
-        _id: job._id
-    }, {
-        values: 1
-    }).then(function(dbJob) {
-        // var oldValue = (dbJob.values.slice(-1)[0] || {}).value;
-        var oldValue = dbJob.values.slice(-1)[0];
-
-        if (oldValue !== newValue) {
-            jobs.update({
-                _id: dbJob._id
-            }, {
-                $push: {
-                    values: newValue
-                }
-            });
-
-            console.log('Updated %s, was "%s", is now "%s"', job.name, oldValue, newValue);
-
-            if (dbJob.values.length) {
-                // console.log('Gonna send an email!');
-                email.send(job, oldValue, newValue);
-            }
-        } else {
-            console.log('%s had same value, old: "%s", new: "%s"', job.name, oldValue, newValue);
-        }
-    }, function(err) {
-        console.log('pushValue() findOne error:', err);
-    });
-};
-
 // Start an interval for the specified job
-exports.start = function start(job) {
+exports.start = function(job) {
     if (runningJobs[job._id]) {
         exports.stop(job);
     }
 
     runningJobs[job._id] = later.setInterval(createInterval(job), job.schedule);
+};
 
-    console.log('Started', job.name);
+// Start all jobs currently in the DB
+exports.startAll = function() {
+    jobs.find().each(function(err, job) {
+        if (err) {
+            console.error('startAll error:', err);
+            return;
+        }
+
+        if (job) {
+            exports.start(job);
+        }
+    });
 };
 
 // Stop the inteval of the specified job
-exports.stop = function stop(job) {
+exports.stop = function(job) {
     runningJobs[job._id].clear();
 
     delete runningJobs[job._id];
-
-    console.log('Stopped', job.name);
 };
 
-exports.remove = function remove(job) {
+// Stop job and remove from DB
+exports.remove = function(job) {
     exports.stop(job);
 
     return jobs.remove({
@@ -121,8 +48,55 @@ exports.remove = function remove(job) {
     }, true);
 };
 
+
+// Wrap collection.findOne() in a promise
+exports.findOne = function(criteria, projection) {
+    var args = Array.prototype.slice.call(arguments);
+
+    return new Promise(function(resolve, reject) {
+        jobs.findOne.apply(jobs, args.concat([function(err, job) {
+            if (err || !job) {
+                reject(err || new Error('Job not found'));
+                return;
+            }
+
+            resolve(job);
+        }]));
+    });
+};
+
+// Ifa  value changed add it to the DB
+exports.pushValue = function(job, newValue) {
+    exports.findOne({
+        _id: job._id
+    }, {
+        values: 1
+    }).then(function(dbJob) {
+        var oldValue = (dbJob.values.slice(-1)[0] || {}).value;
+
+        if (oldValue !== newValue) {
+            jobs.update({
+                _id: dbJob._id
+            }, {
+                $push: {
+                    values: {
+                        time: new Date(),
+                        value: newValue
+                    }
+                }
+            });
+
+            if (dbJob.values.length) {
+                email.send(job, oldValue, newValue);
+            }
+        }
+    }, function(err) {
+        console.error('pushValue() findOne error:', err);
+    });
+};
+
 // Create and insert a job into the DB
-exports.create = function create(body) {
+exports.create = function(body) {
     return new Promise(function(resolve, reject) {
         var job = {
                 values: []
@@ -137,9 +111,9 @@ exports.create = function create(body) {
         // Populate the job object with info from the body
         job.name = body.name.slice(0, 100); // Limit to 100 character
         job.url = body.url;
-        job.email = body.email.split(',')[0]; // Only get first email if multiple are specified
         job.pageQuery = {
-            mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query', // Default to query
+            // Default mode is 'query'
+            mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
             selector: body.selector
         };
         job.id = crypto.randomBytes(16).toString('hex');
@@ -182,26 +156,11 @@ exports.create = function create(body) {
 
                 result = result[0];
 
-                console.log('Created', result.name);
                 exports.start(result);
                 resolve(result);
             });
         } else {
             reject(new Error('No schedule specified for job ' + job.name));
-        }
-    });
-};
-
-// Start all jobs currently in the DB
-exports.startAll = function startAll() {
-    jobs.find().each(function(err, job) {
-        if (err) {
-            console.error('startAll error:', err);
-            return;
-        }
-
-        if (job) {
-            exports.start(job);
         }
     });
 };
@@ -239,4 +198,39 @@ function getValueType(value) {
     }
 
     return out;
+}
+
+function createInterval(job) {
+    return function() {
+        phridge.spawn()
+            .then(function(phantom) {
+                return phantom.openPage(job.url);
+            })
+            .then(function(page) {
+                return page.run(job.pageQuery, function(pageQuery) {
+                    // Here we're inside PhantomJS, so we can't reference variables in the scope
+
+                    // 'this' is an instance of PhantomJS' WebPage
+                    return this.evaluate(function(pageQuery) {
+                        // Here we're *deeper* inside PhantomJS, so we can't reference variables in the scope
+                        var search;
+
+                        if (pageQuery.mode === 'query') {
+                            search = document.querySelector(pageQuery.selector).textContent;
+                        } else if (pageQuery.mode === 'regex') {
+                            search = document.body.innerText.match(new RegExp(pageQuery.selector));
+                        }
+
+                        return search;
+                    }, pageQuery);
+                });
+            })
+            .finally(phridge.dispose)
+            .done(function(newValue) {
+                exports.pushValue(job, newValue);
+            }, function(err) {
+                console.error('pantom error', err);
+                // throw err;
+            });
+    };
 }
