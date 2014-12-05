@@ -24,15 +24,24 @@ var Promise = require('bluebird'),
     };
 
 exports.send = function(job, oldValue, newValue) {
-    return sendMail({
-        from: config.email.fromEmail,
-        to: config.email.toEmail,
-        subject: 'WebMonitor - ' + job.name,
-        html: formatEmail(job, oldValue, newValue)
-    }).then(function(info) {
-        console.log('Sent an email to %s for their "%s"', job.email, job.name);
-        console.log(info);
-    });
+    if (!config.email.toConsole) {
+        sendMail({
+            from: config.email.fromEmail,
+            to: config.email.toEmail,
+            subject: 'WebMonitor - ' + job.name,
+            html: formatEmail(job, oldValue, newValue)
+        }).then(undefined, function(err) {
+            console.error('Email send error:', error);
+        });
+    } else {
+        console.log({
+            name: job.name,
+            url: job.url,
+            id: job.id,
+            old: oldValue,
+            new: newValue
+        });
+    }
 }
 
 function formatEmail(job, oldValue, newValue) {
