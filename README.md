@@ -5,15 +5,16 @@ Monitor values on the web, and get emailed when they change.
 - Query values with `RegExp` or `document.querySelector`
 
 ## Setup
-Create a file called `user.json` in the root directory. This will contain data for sending emails. This will be used with [nodemailer](https://github.com/andris9/Nodemailer), so anything you can do there you should be able to use here. It should contain:
+In `config.json` populate the `email` object with data that will be used with [nodemailer](https://github.com/andris9/Nodemailer). Also change the `domain` to a domain that will be used to link to the site from within the emails, don't include a trailing slash.
 
 ```json
+// config.email
 {
-    "service": "ex. Gmail or SendGrid",
-    "user": "username for the service",
-    "pass": "password for the service",
-    "email": "email to send FROM",
-    "domain": "used in the emails - ex. 'localhost' or 'http://example.com'"
+    service: "ex. Gmail or SendGrid",
+    user: "username for the service",
+    pass: "password for the service",
+    fromEmail: "email to send from",
+    toEmail: "email to send to"
 }
 ```
 

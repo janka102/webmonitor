@@ -2,12 +2,12 @@ var Promise = require('bluebird'),
     nodemailer = require('nodemailer'),
     swig = require('swig'),
     util = require('util'),
-    user = require('./user.json'),
+    config = require('./config'),
     transporter = nodemailer.createTransport({
-        service: user.service,
+        service: config.email.service,
         auth: {
-            user: user.user,
-            pass: user.pass
+            user: config.email.user,
+            pass: config.email.pass
         }
     }),
     // For some reason Promise.promisify didn't work
@@ -24,10 +24,9 @@ var Promise = require('bluebird'),
     };
 
 exports.send = function(job, oldValue, newValue) {
-    // return formatEmail(job, oldValue, newValue);
     return sendMail({
-        from: user.email,
-        to: job.email,
+        from: config.email.fromEmail,
+        to: config.email.toEmail,
         subject: 'WebMonitor - ' + job.name,
         html: formatEmail(job, oldValue, newValue)
     }).then(function(info) {
