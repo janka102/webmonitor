@@ -16,7 +16,7 @@ input, select {
     border-width: 0;
     border-color: #9E9E9E;
     border-bottom-width: 1px;
-    transition: border 300ms;
+    transition: border-color 300ms;
     background-color: #FFF;
 }
 select {
@@ -57,8 +57,10 @@ select, button {
     font-family: inherit;
 }
 input:focus, select:focus {
-    border-color: #009688;
     outline: none;
+    border-color: #009688;
+    border-bottom-width: 2px;
+    margin-bottom: -1px !important; /*TODO: figure out how to not use !important here*/
 }
 input[type="text"], input[type="url"], input[type="email"] {
     width: 18em;
@@ -72,46 +74,46 @@ input[type="checkbox"] {
 input:-moz-ui-invalid {
     box-shadow: none;
 }
-input.has-text:invalid + label, input.has-text:-moz-ui-invalid + label {
+input.has-text:invalid + .input-label, input.has-text:-moz-ui-invalid + .input-label {
     color: #F44336;
 }
 input.has-text:invalid, input.has-text:-moz-ui-invalid {
     border-color: #F44336;
 }
-input + label {
+input + .input-label {
     pointer-events: none;
+    width: 18em;
 }
-input + label::before {
+input + .input-label {
     position: absolute;
-    content: attr(data-title);
     top: 1rem;
     left: 0;
     transition: all 150ms;
 }
-input + label::after {
+input + .input-label::before {
     position: absolute;
-    content: attr(data-example);
+    content: attr(data-placeholder);
     top: 1.3rem;
     left: 0.5em;
     font-size: 0.8rem;
     color: transparent;
-    transition: color 150ms;
+    transition: color 75ms;
 }
-input.no-text:focus + label::after {
+input.no-text:focus + .input-label::before {
     color: #BDBDBD;
 }
-input:focus + label {
+input:focus + .input-label {
     color: #009688;
 }
-input:focus + label::before, input.has-text + label::before {
+input:focus + .input-label, input.has-text + .input-label {
     top: 0;
     font-size: 0.75rem;
 }
-input:focus + label::after, input.has-text + label::after {
+input:focus + .input-label::before, input.has-text + .input-label::before {
     color: transparent;
 }
 .picker input {
-    margin: 0.4em auto;
+    margin: 0.4em auto 0;
     display: block;
 }
 ul {
@@ -126,6 +128,12 @@ ul li {
     padding: 5px 10px 5px 0;
     min-width: 40px;
     min-height: 40px;
+}
+#intervalDisplay {
+    display: block;
+    margin-top: 0.5em;
+    font-size: 0.9rem;
+    color: #616161;
 }
 #submit {
     font-size: 1rem;

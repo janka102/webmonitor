@@ -4,7 +4,7 @@ var dayInputs = document.getElementById('dayPicker').getElementsByTagName('input
     form = document.forms.schedule,
     submit = document.getElementById('submit')
 
-forEach(document.querySelectorAll('input + label[data-title]'), function(el) {
+forEach(document.querySelectorAll('input + .input-label'), function(el) {
     function input(event) {
         var self = event.target;
 
