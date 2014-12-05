@@ -24,7 +24,7 @@ var Promise = require('bluebird'),
     };
 
 exports.send = function(job, oldValue, newValue) {
-    if (!config.email.toConsole) {
+    if (!config.email.dev) {
         sendMail({
             from: config.email.fromEmail,
             to: config.email.toEmail,

@@ -18,6 +18,8 @@ In `config.json` populate the `email` object with data that will be used with [n
 }
 ```
 
+If you only want to see value updates in the console for dev purposes, make `config.email.dev` a truthy value.
+
 ## License (ISC)
 Copyright (c) 2014, Jesse Smick
 
