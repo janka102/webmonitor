@@ -48,6 +48,8 @@ exports.remove = function(job) {
     }, true);
 };
 
+// Expose the find function
+exports.find = jobs.find.bind(jobs);
 
 // Wrap collection.findOne() in a promise
 exports.findOne = function(criteria, projection) {
@@ -109,7 +111,7 @@ exports.create = function(body) {
             schedule = later.parse.recur();
 
         // Populate the job object with info from the body
-        job.name = body.name.slice(0, 100); // Limit to 100 character
+        job.title = body.title.slice(0, 100); // Limit to 100 character
         job.url = body.url;
         job.pageQuery = {
             // Default mode is 'query'
@@ -160,7 +162,7 @@ exports.create = function(body) {
                 resolve(result);
             });
         } else {
-            reject(new Error('No schedule specified for job ' + job.name));
+            reject(new Error('No schedule specified for job ' + job.title));
         }
     });
 };

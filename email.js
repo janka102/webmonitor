@@ -28,14 +28,14 @@ exports.send = function(job, oldValue, newValue) {
         sendMail({
             from: config.email.fromEmail,
             to: config.email.toEmail,
-            subject: 'WebMonitor - ' + job.name,
+            subject: 'WebMonitor - ' + job.title,
             html: formatEmail(job, oldValue, newValue)
         }).then(undefined, function(err) {
             console.error('Email send error:', error);
         });
     } else {
         console.log({
-            name: job.name,
+            title: job.title,
             url: job.url,
             id: job.id,
             old: oldValue,
