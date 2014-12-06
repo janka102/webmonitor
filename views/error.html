@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>WebMonitor - {{ error.name }}</title>
+    <title>WebMonitor - {{ error.title }}</title>
     <link rel="stylesheet" href="/main.css">
 </head>
 
@@ -19,10 +19,12 @@
             </h1>
         </header>
         <div class="container">
-            <h2>{{ error.title }}</h2>
-            <p>
-                {{ error.description|safe }}
-            </p>
+            <h2>{{ error.name }}</h2>
+            {% if error.description %}
+                <p>
+                    {{ error.description|safe }}
+                </p>
+            {% endif %}
         </div>
     </div>
 

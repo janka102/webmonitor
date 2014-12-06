@@ -78,10 +78,10 @@ app.route('/stop/:id')
                 domain: config.domain
             });
         }, function(err) {
-            res.render('404', {
+            res.render('error', {
                 error: {
-                    name: 'Not found',
-                    title: 'Could not find specified monitor value',
+                    title: 'Not found',
+                    name: 'Could not find specified monitor value',
                     description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
                 },
                 domain: config.domain
@@ -104,10 +104,10 @@ app.route('/stop/:id')
 
 // Catch-all/404
 app.get('*', function(req, res) {
-    res.render('404', {
+    res.render('error', {
         error: {
-            name: 'Not Found',
-            title: '404 - Page not found',
+            title: 'Not Found',
+            name: '404 - Page not found',
             description: 'The page at <b>' + req.path + '</b> was not found. Go <a href="' + user.domain + '">home</a>.'
         }
     })
