@@ -51,6 +51,12 @@ app.get('/list', function(req, res) {
     }).toArray(function(err, array) {
         if (err) {
             console.error('Find error:', err);
+            res.render('error', {
+                error: {
+                    title: 'Internal error'
+                    name: 'Could not create monitored value'
+                }
+            });
             return;
         }
 
@@ -63,6 +69,8 @@ app.get('/list', function(req, res) {
 app.post('/monitor', function(req, res) {
     jobs.create(req.body).then(function(job) {
         res.send(200);
+    }, function(err) {
+        res.send(500);
     });
 });
 
