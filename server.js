@@ -43,20 +43,18 @@ app.get('/', function(req, res) {
 });
 
 app.get('/list', function(req, res) {
-    jobs.find().toArray(function(err, array) {
+    jobs.find({}, {
+        _id: 0,
+        id: 1,
+        title: 1,
+        url: 1
+    }).toArray(function(err, array) {
         if (err) {
             console.error('Find error:', err);
             return;
         }
 
-        // Only get last value
-        array.map(function(item) {
-            item.values = item.values.slice(-1);
-
-            return item; 
-        });
-
-        res.render('list.html', {
+        res.render('list', {
             jobs: array
         });
     });
