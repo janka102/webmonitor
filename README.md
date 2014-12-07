@@ -10,11 +10,11 @@ In `config.json` populate the `email` object with data that will be used with [n
 ```json
 // config.email
 {
-    service: "ex. Gmail or SendGrid",
-    user: "username for the service",
-    pass: "password for the service",
-    fromEmail: "email to send from",
-    toEmail: "email to send to"
+    "service": "ex. Gmail or SendGrid",
+    "user": "username for the service",
+    "pass": "password for the service",
+    "fromEmail": "email to send from",
+    "toEmail": "email to send to"
 }
 ```
 
