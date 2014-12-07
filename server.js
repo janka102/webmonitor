@@ -53,7 +53,7 @@ app.get('/list', function(req, res) {
             console.error('Find error:', err);
             res.render('error', {
                 error: {
-                    title: 'Internal error'
+                    title: 'Internal error',
                     name: 'Could not create monitored value'
                 }
             });
@@ -114,7 +114,7 @@ app.get('*', function(req, res) {
         error: {
             title: 'Not Found',
             name: '404 - Page not found',
-            description: 'The page at <b>' + req.path + '</b> was not found. Go <a href="' + user.domain + '">home</a>.'
+            description: 'The page at <b>' + req.path + '</b> was not found. Go <a href="' + config.domain + '">home</a>.'
         }
     })
 });
