@@ -26,7 +26,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 swig.setDefaults({
-    cache: config.dev ? false : 'memory'
+    cache: config.dev ? false : 'memory',
+    locals: {
+        domain: config.domain
+    }
 });
 
 app.engine('html', swig.renderFile);
@@ -80,8 +83,7 @@ app.route('/stop/:id')
             id: req.params.id
         }).then(function(job) {
             res.render('stop', {
-                job: job,
-                domain: config.domain
+                job: job
             });
         }, function(err) {
             res.render('error', {
@@ -89,8 +91,7 @@ app.route('/stop/:id')
                     title: 'Not found',
                     name: 'Could not find specified monitor value',
                     description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
-                },
-                domain: config.domain
+                }
             });
         });
     })
