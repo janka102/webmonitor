@@ -1,21 +1,24 @@
 {
+  "private": true,
   "name": "webmonitor",
+  "description": "Monitor values on the web, and get emailed when they change",
   "version": "0.2.0",
   "author": "Jesse Smick",
-  "dependencies": {
-    "bluebird": "~2.3.11",
-    "body-parser": "~1.4.3",
-    "compression": "~1.0.11",
-    "express": "~4.6.1",
-    "later": "~1.1.6",
-    "morgan": "~1.1.1",
-    "node-schedule": "~0.1.13",
-    "nodemailer": "~1.3.0",
-    "phridge": "~1.0.7",
-    "swig": "^1.4.2",
-    "tingodb": "~0.3.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janka102/webmonitor.git"
   },
-  "engines": {
-    "node": "0.10.x"
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.1",
+    "express": "^4.16.2",
+    "later": "^1.2.0",
+    "morgan": "^1.9.0",
+    "node-schedule": "^1.2.5",
+    "nodemailer": "^4.3.1",
+    "phridge": "^2.0.0",
+    "swig": "^1.4.2",
+    "tingodb": "^0.5.1"
   }
 }
