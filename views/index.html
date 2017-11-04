@@ -1,137 +1,89 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %} {% block body %}
+<h2>Submit a value to monitor</h2>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <title>WebMonitor</title>
-    <link href='http://fonts.googleapis.com/css?family=Roboto:500,300,400' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/main.css">
-    <link rel="stylesheet" href="/spinner.css">
-    <link rel="stylesheet" href="/index.css">
-</head>
+<form name="schedule" action="/monitor" method="post">
+  <div class="form-group">
+    <input id="title" name="title" type="text" required>
+    <label for="title" class="input-label" data-placeholder="My Awesome Value">Title</label>
+  </div>
 
-<body>
-    <div class="wrap">
-        <header>
-            <h1>
-                WebMonitor
-                <small>Monitor values on the web, and get emailed when they change</small>
-            </h1>
-        </header>
+  <div class="form-group">
+    <input id="url" name="url" type="text" required>
+    <label for="url" class="input-label" data-placeholder="http://example.com">URL</label>
+  </div>
 
-        <div class="container">
-            <h2>Submit a value to monitor</h2>
+  <div class="form-group">
+    <div class="group-title">Interval</div>
 
-            <form name="schedule" action="/monitor" method="post">
-                <div class="form-field">
-                    <input id="title" name="title" type="text" class="no-text" required>
-                    <label for="title" class="input-label" data-placeholder="My Awesome Value">Title</label>
-                </div>
-                <div class="form-field">
-                    <input id="url" name="url" type="url" class="no-text" required>
-                    <label for="url" class="input-label" data-placeholder="http://example.com">URL</label>
-                </div>
-                <div class="form-field">
-                    <span class="field-title">Interval</span>
-                    <div class="picker">
-                        <ul id="dayPicker">
-                            <li>
-                                <label>
-                                    Sun
-                                    <input id="sunday" name="sunday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Mon
-                                    <input id="monday" name="monday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Tue
-                                    <input id="tuesday" name="tuesday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Wed
-                                    <input id="wednesday" name="wednesday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Thu
-                                    <input id="thursday" name="thursday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Fri
-                                    <input id="friday" name="friday" type="checkbox">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Sat
-                                    <input id="saturday" name="saturday" type="checkbox">
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="picker">
-                        <ul id="timePicker">
-                            <li>
-                                <label>
-                                    Hours
-                                    <input name="hours" type="number" min="0" max="23" value="0">
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    Minutes
-                                    <input name="minutes" type="number" min="0" max="59" value="25">
-                                </label>
-                            </li>{% if dev %}
-                            <li>
-                                <label>
-                                    Seconds
-                                    <input name="seconds" type="number" min="0" max="59" value="0">
-                                </label>
-                            </li>{% endif %}
-                        </ul>
-                    </div>
-                    <span id="intervalDisplay"></span>
-                </div>
-                <div class="form-field">
-                    <select id="mode" name="mode">
-                        <option value="query">Query Selector</option>
-                        <option value="regex">Regular Expressions</option>
-                    </select>
-                    <label for="mode">Selector Mode</label>
-                </div>
-                <div class="form-field">
-                    <input id="selector" name="selector" type="text" class="no-text" required>
-                    <label for="selector" class="input-label" data-placeholder="#selector or R(e)g\1x">Selector</label>
-                </div>
-
-                <button id="submit" type="submit">Monitor</button>
-            </form>
-        </div>
+    <ul class="select-group">
+      <li>
+        <input id="sunday" name="sunday" type="checkbox">
+        <label for="sunday">Sun</label>
+      </li>
+      <li>
+        <input id="monday" name="monday" type="checkbox">
+        <label for="monday">Mon</label>
+      </li>
+      <li>
+        <input id="tuesday" name="tuesday" type="checkbox">
+        <label for="tuesday">Tue</label>
+      </li>
+      <li>
+        <input id="wednesday" name="wednesday" type="checkbox">
+        <label for="wednesday">Wed</label>
+      </li>
+      <li>
+        <input id="thursday" name="thursday" type="checkbox">
+        <label for="thursday">Thu</label>
+      </li>
+      <li>
+        <input id="friday" name="friday" type="checkbox">
+        <label for="friday">Fri</label>
+      </li>
+      <li>
+        <input id="saturday" name="saturday" type="checkbox">
+        <label for="saturday">Sat</label>
+      </li>
+    </ul>
+    <div class="time-picker">
+      <label>
+        Hours:
+        <input name="hours" id="hours" type="number" min="0" max="23" value="0">
+      </label>
+      <label>
+        Minutes:
+        <input name="minutes" id="minutes" type="number" min="0" max="59" value="25">
+      </label>
+      {% if not production %}
+      <label>
+        Seconds:
+        <input name="seconds" id="seconds" type="number" min="0" max="59" value="0">
+      </label>
+      {% endif %}
     </div>
+    <span id="intervalDisplay"></span>
+  </div>
 
-    <footer>
-        <div class="container">
-            <a href="{{ domain|safe }}">Monitor more values</a> •
-            <a href="https://www.github.com/janka102/webmonitor">Source on GitHub</a>
-        </div>
-    </footer>
+  <div class="form-group">
+    <div class="group-title">Selector Mode</div>
 
-    <script src="/atomic.min.js"></script>
-    <script src="/main.js"></script>
-</body>
+    <ul class="select-group">
+      <li>
+        <input id="query-mode" name="mode" type="radio" value="query" checked>
+        <label for="query-mode">Query</label>
+      </li>
+      <li>
+        <input id="regex-mode" name="mode" type="radio" value="regex">
+        <label for="regex-mode">Regex</label>
+      </li>
+    </ul>
+  </div>
 
-</html>
+  <div class="form-group">
+    <input id="selector" name="selector" type="text" required>
+    <label for="selector" class="input-label" data-placeholder="#selector or R(e)g\1x">Selector</label>
+  </div>
+
+  <button id="submit" type="submit">Monitor</button>
+</form>
+{% endblock %}

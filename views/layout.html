@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ (title + " | ") if title }}WebMonitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  
+  {% for item in css %}
+  <link rel="stylesheet" href="{{ item }}">
+  {% endfor %}
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <h1>
+        WebMonitor
+        <small>Monitor values on the web, and get emailed when they change</small>
+      </h1>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      {% block body %}{% endblock %}
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <a href="{{ domain | safe }}">Monitor more values</a> &bull;
+      <a href="https://www.github.com/janka102/webmonitor">Source on GitHub</a>
+    </div>
+  </footer>
+
+  {% for item in js %}
+  <script src="{{ item }}"></script>
+  {% endfor %}
+</body>
+
+</html>
