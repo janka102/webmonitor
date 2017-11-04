@@ -1,6 +1,6 @@
 var Promise = require('bluebird'),
     nodemailer = require('nodemailer'),
-    swig = require('swig'),
+    // swig = require('swig'),
     util = require('util'),
     config = require('./config'),
     transporter = nodemailer.createTransport({
