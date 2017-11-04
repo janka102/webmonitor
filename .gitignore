@@ -3,6 +3,10 @@
 
 # Node
 node_modules/
+*.log
+
+# Dotenv
+.env
 
 ## File-based DB
 monitor/**
