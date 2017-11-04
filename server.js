@@ -34,7 +34,7 @@ nunjucks.configure('views', {
 // Set default template extension to .html
 app.set('view engine', 'html')
 
-app.locals.css = ['/main.css']
+app.locals.css = ['/css/main.css']
 app.locals.js = []
 app.locals.domain = config.domain
 
@@ -44,7 +44,8 @@ app.use(express.static(path.join(config.root, 'public')))
 app.get('/', function(req, res) {
   res.render('index', {
     production: config.production,
-    css: req.app.locals.css.concat('/index.css')
+    css: req.app.locals.css.concat('/css/index.css'),
+    js: req.app.locals.js.concat('/js/index.js')
   })
 })
 
