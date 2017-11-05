@@ -27,12 +27,24 @@ forEach(timeInputs, input => {
 
 updateInterval()
 
-form.addEventListener('submit', function(event) {
+form.addEventListener('submit', event => {
   event.preventDefault()
 
-  atomic.post(event.target.action, serialize(event.target)).success(function(text) {
-    console.log('From server:', text)
-  })
+  const params = []
+
+  for (const pair of new FormData(form)) {
+    params.push(encodeURIComponent(pair[0]) + '=' + encodeURIComponent(pair[1]))
+  }
+
+  atomic
+    .ajax({
+      type: 'POST',
+      url: event.target.action,
+      data: params.join('&')
+    })
+    .success(res => {
+      console.log('From server:', res)
+    })
 })
 
 function updateInterval() {
@@ -71,36 +83,4 @@ function forEach(list, fn) {
 
 function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
-}
-
-function serialize(form) {
-  // Based on http://stackoverflow.com/a/24435566/1307440
-  var field,
-    query = []
-
-  if (form && form.nodeName === 'FORM') {
-    for (var i = 0, elLen = form.elements.length; i < elLen; i++) {
-      field = form.elements[i]
-
-      if (field.name && field.type !== 'file' && field.type !== 'reset') {
-        if (field.type == 'select-multiple') {
-          for (var j = 0, optLen = field.options.length, option; j < optLen; j++) {
-            option = field.options[j]
-
-            if (option.selected) {
-              query.push(field.name + '=' + encodeURIComponent(option.value).replace(/%20/g, '+'))
-            }
-          }
-        } else {
-          if (field.type !== 'submit' && field.type !== 'button') {
-            if ((field.type !== 'checkbox' && field.type !== 'radio') || field.checked) {
-              query.push(field.name + '=' + encodeURIComponent(field.value).replace(/%20/g, '+'))
-            }
-          }
-        }
-      }
-    }
-  }
-
-  return query.join('&')
 }

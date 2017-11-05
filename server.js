@@ -45,7 +45,7 @@ app.get('/', function(req, res) {
   res.render('index', {
     production: config.production,
     css: req.app.locals.css.concat('/css/index.css'),
-    js: req.app.locals.js.concat('/js/index.js')
+    js: req.app.locals.js.concat('/js/atomic.min.js', '/js/index.js')
   })
 })
 
