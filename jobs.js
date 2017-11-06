@@ -1,32 +1,41 @@
 const later = require('later')
-const phridge = require('phridge')
-const db = new (require('tingodb')()).Db('./monitor', {})
-const jobs = db.collection('jobs')
-const email = require('./email')
+const puppeteer = require('puppeteer')
+const { URL } = require('url')
+
+const Job = require('mongoose').model('Job')
 const config = require('./config.js')
+
 const runningJobs = {}
+let browser = null
 
 // Start an interval for the specified job
-exports.start = function(job) {
+exports.start = async function(job) {
   if (runningJobs[job._id]) {
     exports.stop(job)
   }
 
-  runningJobs[job._id] = later.setInterval(createInterval(job), job.schedule)
+  if (!browser) {
+    browser = await puppeteer.launch()
+  }
+
+  const schedule = later.parse.text(job.interval, !config.production)
+
+  runningJobs[job._id] = later.setInterval(createInterval(job), schedule)
 }
 
 // Start all jobs currently in the DB
 exports.startAll = function() {
-  jobs.find().each((err, job) => {
-    if (err) {
-      console.error('jobs.startAll error:', err)
-      return
-    }
-
-    if (job) {
-      exports.start(job)
-    }
-  })
+  Job.find()
+    .exec()
+    .then(jobs => {
+      for (const job of jobs) {
+        console.log('Starting:', job._id, job.title)
+        exports.start(job)
+      }
+    })
+    .end(error => {
+      console.error('jobs.startAll error:', error)
+    })
 }
 
 // Stop the inteval of the specified job
@@ -49,76 +58,43 @@ exports.remove = function(job) {
 }
 
 // Expose the find function
-exports.find = jobs.find.bind(jobs)
-
-// Wrap collection.findOne() in a promise
-exports.findOne = function(criteria, projection) {
-  var args = Array.prototype.slice.call(arguments)
-
-  return new Promise(function(resolve, reject) {
-    jobs.findOne.apply(
-      jobs,
-      args.concat([
-        function(err, job) {
-          if (err || !job) {
-            reject(err || new Error('Job not found'))
-            return
-          }
-
-          resolve(job)
-        }
-      ])
-    )
-  })
-}
+exports.find = Job.find.bind(Job)
 
 // Ifa  value changed add it to the DB
-exports.pushValue = function(job, newValue) {
-  exports
-    .findOne(
-      {
-        _id: job._id
-      },
-      {
-        values: 1
-      }
-    )
-    .then(
-      function(dbJob) {
-        var oldValue = (dbJob.values.slice(-1)[0] || {}).value
+exports.pushValue = async function(job, newValue) {
+  const dbJob = await Job.findById(job._id, { values: 1 }).exec()
+  const oldValue = (dbJob.values.slice(-1)[0] || {}).value
 
-        if (oldValue !== newValue) {
-          jobs.update(
-            {
-              _id: dbJob._id
-            },
-            {
-              $push: {
-                values: {
-                  time: new Date(),
-                  value: newValue
-                }
-              }
-            }
-          )
+  if (oldValue !== newValue.value) {
+    dbJob.values.push(newValue)
+    await dbJob.save()
 
-          if (dbJob.values.length) {
-            email.send(job, oldValue, newValue)
-          }
-        }
-      },
-      function(err) {
-        console.error('pushValue() findOne error:', err)
-      }
-    )
+    // email.send(job, oldValue, newValue)
+  }
 }
 
 // Create and insert a job into the DB
-exports.create = function(body) {
-  const referenceDays = 'sunday monday tuesday wednesday thrusday friday saturday'.split(' ')
-  const days = Object.keys(body.days)
-    .filter(day => referenceDays.indexOf(day) >= 0)
-    .join(',')
+exports.create = async function(body) {
+  let url = body.url
+
+  try {
+    // Has to be HTTP
+    if (!/^https?:\/\//.test(body.url)) {
+      url = `http://${body.url}`
+    }
+
+    // Throws error if invalid
+    url = new URL(url).href
+  } catch (e) {
+    throw { message: 'URL invalid', status: 400 }
+  }
+
+  if (!url.match(/^https?:/)) {
+    throw { message: 'URL must be HTTP', status: 400 }
+  }
+
+  const weekDays = 'sunday monday tuesday wednesday thrusday friday saturday'.split(' ')
+  const days = body.days.filter(day => weekDays.indexOf(day) >= 0).join(',')
   let interval = 'every '
 
   switch (body.interval) {
@@ -145,7 +121,7 @@ exports.create = function(body) {
       break
     default:
       if (body.interval === '0' && !config.production) {
-        interval += '1 minute'
+        interval += '15 seconds'
       } else {
         interval += '1 hour'
       }
@@ -156,104 +132,85 @@ exports.create = function(body) {
     interval += ` on ${days}`
   }
 
-  return new Promise((resolve, reject) => {
-    const job = {
-      title: body.title,
-      url: body.url,
-      query: {
-        // Default mode is 'query'
-        mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
-        selector: body.selector
-      },
-      schedule: later.parse.text(interval),
-      values: []
-    }
-
-    jobs.insert(job, (err, result) => {
-      if (err) {
-        console.error('jobs.create error:', err)
-        reject(err)
-        return
-      }
-
-      result = result[0]
-
-      exports.start(result)
-      resolve(result)
-    })
-  })
-}
-
-function getValueType(value) {
-  var out = {
-      type: ''
+  const job = await Job.create({
+    title: body.title,
+    url: url,
+    query: {
+      // Default mode is 'query'
+      mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
+      selector: body.selector
     },
-    currencySymbol
+    interval: interval
+  })
 
-  value = value.trim()
-
-  if (!value.length) {
-    out.type = 'string'
-  } else if (!isNaN(Number(value))) {
-    out.type = 'number'
-  } else if ((currencySymbol = value.match(/^[$€£¥]|[$€£¥]$/))) {
-    out.type = 'currency'
-
-    if (value.indexOf(currencySymbol[0]) === 0) {
-      currencySymbol = '^\\' + currencySymbol[0]
-    } else {
-      currencySymbol = '\\' + currencySymbol[0] + '$'
-    }
-
-    out.symbol = currencySymbol
-  } else {
-    try {
-      JSON.parse(value)
-
-      out.type = 'json'
-    } catch (e) {
-      out.type = 'string'
-    }
-  }
-
-  return out
+  exports.start(job)
+  return job
 }
 
 function createInterval(job) {
+  const run = async () => {
+    const page = await browser.newPage()
+    let result = null
+    let error = null
+
+    try {
+      await page.goto(job.url, { timeout: 15 * 1000, waitUnilt: 'networkidle' })
+
+      result = await page.evaluate(query => {
+        let search
+
+        if (query.mode === 'query') {
+          const el = document.querySelector(query.selector)
+          search = el ? el.textContent.trim() : ''
+        } else if (query.mode === 'regex') {
+          const match = document.body.textContent.match(new RegExp(query.selector))
+          search = match ? match[0].trim() : ''
+        }
+
+        const number = Number(search)
+
+        if (search.length && !isNaN(number)) {
+          search = number
+        }
+
+        return search
+      }, job.query)
+    } catch (e) {
+      error = e
+    }
+
+    await page.close()
+
+    if (error) {
+      throw error
+    }
+
+    return {
+      time: new Date(),
+      value: result,
+      kind: typeof result === 'string' ? 'text' : 'number'
+    }
+  }
+
   return function() {
-    phridge
-      .spawn()
-      .then(function(phantom) {
-        return phantom.openPage(job.url)
+    run()
+      .then(result => {
+        console.log('result:', result)
+        exports.pushValue(job, result)
       })
-      .then(function(page) {
-        return page.run(job.pageQuery, function(pageQuery) {
-          // Here we're inside PhantomJS, so we can't reference variables in the scope
-
-          // 'this' is an instance of PhantomJS' WebPage
-          return this.evaluate(function(pageQuery) {
-            // Here we're *deeper* inside PhantomJS, so we can't reference variables in the scope
-            var search
-
-            if (pageQuery.mode === 'query') {
-              search = document.querySelector(pageQuery.selector).textContent
-            } else if (pageQuery.mode === 'regex') {
-              search = document.body.innerText.match(new RegExp(pageQuery.selector))
-            }
-
-            return search
-          }, pageQuery)
+      .catch(error => {
+        console.log('puppeteer error:', error)
+        exports.pushValue(job, {
+          time: new Date(),
+          value: error.message,
+          kind: 'error'
         })
       })
-      .finally(phridge.dispose)
-      .done(
-        function(newValue) {
-          exports.pushValue(job, newValue)
-        },
-        function(err) {
-          console.error('pantom error', err)
-          // throw err;
-        }
-      )
   }
 }
+
+process.on('exit', () => {
+  if (browser) {
+    browser.close()
+  }
+})

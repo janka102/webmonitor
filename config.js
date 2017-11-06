@@ -3,6 +3,7 @@ exports = module.exports = {
   production: process.env.NODE_ENV === 'production',
   port: process.env.PORT || 3000,
   domain: process.env.MONITOR_DOMAIN,
+  mongoose: process.env.MONGOOSE_URL || `tingodb://${__dirname}/data`,
   email: {
     service: process.env.EMAIL_SERVICE,
     username: process.env.EMAIL_USER,
