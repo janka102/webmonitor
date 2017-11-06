@@ -22,6 +22,15 @@
     </div>
   </header>
 
+  <nav>
+    <div class="container">
+      <ul>
+        <li><a href="/"{% if path == '/' %} class="active"{% endif %}>New</a></li>
+        <li><a href="/list"{% if path == '/list' %} class="active"{% endif %}>List</a></li>
+      </ul>
+    </div>
+  </nav>
+
   <main>
     <div class="container">
       {% block body %}{% endblock %}

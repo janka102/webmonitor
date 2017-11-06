@@ -1,25 +1,37 @@
 .monitor-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #9e9e9e;
+  border-radius: 4px;
 }
+
+.monitor-list li {
+  border-bottom: 1px solid #9e9e9e;
+  padding: 0.5rem 1rem;
+}
+
+.monitor-list li:last-of-type {
+  border-bottom: none;
+}
+
 .monitor-list h3 {
-    margin-bottom: 0;
+  margin: 0;
 }
+
 .monitor-url {
-    display: block;
+  display: block;
 }
-.manage-link {
-    display: inline-block;
-    font-size: 0.9rem;
-    margin-right: 0.5rem;
-    color: #2196F3;
+
+.monitor-list .manage-button {
+  text-transform: uppercase;
+  background-color: #2196f3;
+  display: inline-block;
+  border: none;
+  color: white;
 }
-.manage-link:hover {
-    text-decoration: none;
-    color: #1E88E5;
-}
-.manage-link:focus {
-    text-decoration: none;
-    color: #1976D2;
+
+.monitor-list .manage-button:hover {
+  background-color: #42A5F5;
+  text-decoration: none;
 }

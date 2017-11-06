@@ -1,0 +1,22 @@
+{% set title = "Manage " + job.title %} {% extends "layout.html" %} {% block body %}
+<h2>{{ job.title }}</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>time</th>
+      <th>value</th>
+      <th>kind</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for value in job.values %}
+    <tr>
+      <td>{{ value.time }}</td>
+      <td>{{ value.value }}</td>
+      <td>{{ value.kind }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

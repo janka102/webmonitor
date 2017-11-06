@@ -47,39 +47,21 @@ function startServer() {
 
   app.get('/', (req, res) => {
     res.render('index', {
+      path: '/',
       production: config.production,
       css: req.app.locals.css.concat('/css/index.css'),
       js: req.app.locals.js.concat('/js/atomic.min.js', '/js/index.js')
     })
   })
-
-  app.get('/list', function(req, res) {
-    jobs
-      .find(
-        {},
-        {
-          _id: 0,
-          id: 1,
-          title: 1,
-          url: 1
-        }
-      )
-      .toArray(function(err, array) {
-        if (err) {
-          console.error('Find error:', err)
-          res.render('error', {
-            error: {
-              title: 'Internal error',
-              name: 'Could not create monitored value'
-            }
-          })
-          return
-        }
-
-        res.render('list', {
-          jobs: array
-        })
+  
+  app.get('/list', (req, res) => {
+    jobs.getAll().then(array => {
+      res.render('list', {
+        path: '/list',
+        css: req.app.locals.css.concat('/css/list.css'),
+        jobs: array
       })
+    })
   })
 
   app.post('/monitor', (req, res) => {
@@ -104,15 +86,14 @@ function startServer() {
   })
 
   app
-    .route('/stop/:id')
+    .route('/manage/:id')
     .get(function(req, res) {
       jobs
-        .findOne({
-          id: req.params.id
-        })
+        .findById(req.params.id)
         .then(
           function(job) {
-            res.render('stop', {
+            res.render('manage', {
+              css: req.app.locals.css.concat('/css/manage.css'),
               job: job
             })
           },

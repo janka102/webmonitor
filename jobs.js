@@ -23,10 +23,18 @@ exports.start = async function(job) {
   runningJobs[job._id] = later.setInterval(createInterval(job), schedule)
 }
 
+exports.getAll = function() {
+  return Job.find().exec()
+}
+
+exports.findById = function(id, projection) {
+  return Job.findById(id, projection).exec()
+}
+
 // Start all jobs currently in the DB
 exports.startAll = function() {
-  Job.find()
-    .exec()
+  exports
+    .getAll()
     .then(jobs => {
       for (const job of jobs) {
         console.log('Starting:', job._id, job.title)
@@ -208,6 +216,13 @@ function createInterval(job) {
       })
   }
 }
+
+process.on('beforeExit', () => {
+  if (browser) {
+    browser.close()
+    browser = null
+  }
+})
 
 process.on('exit', () => {
   if (browser) {
