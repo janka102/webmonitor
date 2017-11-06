@@ -217,6 +217,15 @@ function createInterval(job) {
   }
 }
 
+process.on('SIGINT', () => {
+  if (browser) {
+    browser.close()
+    browser = null
+  }
+
+  process.exit()
+})
+
 process.on('beforeExit', () => {
   if (browser) {
     browser.close()
