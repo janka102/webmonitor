@@ -21,7 +21,7 @@ app.disable('x-powered-by')
 app.use(compression())
 app.use(
   bodyParser.urlencoded({
-    extended: false
+    extended: true
   })
 )
 

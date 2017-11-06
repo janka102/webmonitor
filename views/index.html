@@ -33,49 +33,48 @@
   <div class="form-group">
     <ul id="day-picker" class="select-group">
       <li>
-        <input id="sunday" name="sunday" type="checkbox">
+        <input id="sunday" name="days[sunday]" type="checkbox">
         <label for="sunday">Sun</label>
       </li>
       <li>
-        <input id="monday" name="monday" type="checkbox">
+        <input id="monday" name="days[monday]" type="checkbox">
         <label for="monday">Mon</label>
       </li>
       <li>
-        <input id="tuesday" name="tuesday" type="checkbox">
+        <input id="tuesday" name="days[tuesday]" type="checkbox">
         <label for="tuesday">Tue</label>
       </li>
       <li>
-        <input id="wednesday" name="wednesday" type="checkbox">
+        <input id="wednesday" name="days[wednesday]" type="checkbox">
         <label for="wednesday">Wed</label>
       </li>
       <li>
-        <input id="thursday" name="thursday" type="checkbox">
+        <input id="thursday" name="days[thursday]" type="checkbox">
         <label for="thursday">Thu</label>
       </li>
       <li>
-        <input id="friday" name="friday" type="checkbox">
+        <input id="friday" name="days[friday]" type="checkbox">
         <label for="friday">Fri</label>
       </li>
       <li>
-        <input id="saturday" name="saturday" type="checkbox">
+        <input id="saturday" name="days[saturday]" type="checkbox">
         <label for="saturday">Sat</label>
       </li>
     </ul>
-    <div id="time-picker">
-      <label>
-        Hours:
-        <input name="hours" id="hours" type="number" min="0" max="23" value="0">
-      </label>
-      <label>
-        Minutes:
-        <input name="minutes" id="minutes" type="number" min="0" max="59" value="0">
-      </label>
-      {% if not production %}
-      <label>
-        Seconds:
-        <input name="seconds" id="seconds" type="number" min="0" max="59" value="0">
-      </label>
-      {% endif %}
+    <div class="form-group">
+      <select id="interval" name="interval">
+        {% if not production %}
+        <option value="0">every minute</option>
+        {% endif %}
+        <option value="1">every 5 minutes</option>
+        <option value="2">every 15 minutes</option>
+        <option value="3">every 30 minutes</option>
+        <option value="4" selected>every hour</option>
+        <option value="5">every 3 hours</option>
+        <option value="6">every 6 hours</option>
+        <option value="7">every 12 hours</option>
+      </select>
+      <label for="interval" class="input-label">Interval</label>
     </div>
     <div id="interval-display"></div>
   </div>
