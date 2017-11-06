@@ -212,5 +212,6 @@ function createInterval(job) {
 process.on('exit', () => {
   if (browser) {
     browser.close()
+    browser = null
   }
 })
