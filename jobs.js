@@ -1,6 +1,5 @@
 const later = require('later')
 const phridge = require('phridge')
-const crypto = require('crypto')
 const db = new (require('tingodb')()).Db('./monitor', {})
 const jobs = db.collection('jobs')
 const email = require('./email')
@@ -133,7 +132,7 @@ exports.create = function(body) {
       interval += '30 minutes'
       break
     case '4':
-      interval += 'hour'
+      interval += '1 hour'
       break
     case '5':
       interval += '3 hours'
@@ -146,9 +145,9 @@ exports.create = function(body) {
       break
     default:
       if (body.interval === '0' && !config.production) {
-        interval += 'minute'
+        interval += '1 minute'
       } else {
-        interval += 'hour'
+        interval += '1 hour'
       }
       break
   }
@@ -159,7 +158,6 @@ exports.create = function(body) {
 
   return new Promise((resolve, reject) => {
     const job = {
-      id: crypto.randomBytes(16).toString('hex'),
       title: body.title,
       url: body.url,
       query: {
