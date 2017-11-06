@@ -1,12 +1,11 @@
-var Promise = require('bluebird'),
-  later = require('later'),
-  phridge = require('phridge'),
-  crypto = require('crypto'),
-  db = new (require('tingodb')()).Db('./monitor', {}),
-  jobs = db.collection('jobs'),
-  email = require('./email'),
-  config = require('./config'),
-  runningJobs = {}
+const later = require('later')
+const phridge = require('phridge')
+const crypto = require('crypto')
+const db = new (require('tingodb')()).Db('./monitor', {})
+const jobs = db.collection('jobs')
+const email = require('./email')
+const config = require('./config.js')
+const runningJobs = {}
 
 // Start an interval for the specified job
 exports.start = function(job) {
@@ -19,9 +18,9 @@ exports.start = function(job) {
 
 // Start all jobs currently in the DB
 exports.startAll = function() {
-  jobs.find().each(function(err, job) {
+  jobs.find().each((err, job) => {
     if (err) {
-      console.error('startAll error:', err)
+      console.error('jobs.startAll error:', err)
       return
     }
 
@@ -117,73 +116,73 @@ exports.pushValue = function(job, newValue) {
 
 // Create and insert a job into the DB
 exports.create = function(body) {
-  return new Promise(function(resolve, reject) {
-    var job = {
-        values: []
+  const referenceDays = 'sunday monday tuesday wednesday thrusday friday saturday'.split(' ')
+  const days = Object.keys(body.days)
+    .filter(day => referenceDays.indexOf(day) >= 0)
+    .join(',')
+  let interval = 'every '
+
+  switch (body.interval) {
+    case '1':
+      interval += '5 minutes'
+      break
+    case '2':
+      interval += '15 minutes'
+      break
+    case '3':
+      interval += '30 minutes'
+      break
+    case '4':
+      interval += 'hour'
+      break
+    case '5':
+      interval += '3 hours'
+      break
+    case '6':
+      interval += '6 hours'
+      break
+    case '7':
+      interval += '12 hours'
+      break
+    default:
+      if (body.interval === '0' && !config.production) {
+        interval += 'minute'
+      } else {
+        interval += 'hour'
+      }
+      break
+  }
+
+  if (days.length) {
+    interval += ` on ${days}`
+  }
+
+  return new Promise((resolve, reject) => {
+    const job = {
+      id: crypto.randomBytes(16).toString('hex'),
+      title: body.title,
+      url: body.url,
+      query: {
+        // Default mode is 'query'
+        mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
+        selector: body.selector
       },
-      referenceDays = 'sunday monday tuesday wednesday thrusday friday saturday'.split(' '),
-      days = referenceDays.slice(), // clone array
-      hours = parseInt(body.hours),
-      minutes = parseInt(body.minutes),
-      seconds = parseInt(body.seconds),
-      schedule = later.parse.recur()
-
-    // Populate the job object with info from the body
-    job.title = body.title.slice(0, 100) // Limit to 100 character
-    job.url = body.url
-    job.pageQuery = {
-      // Default mode is 'query'
-      mode: body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
-      selector: body.selector
-    }
-    job.id = crypto.randomBytes(16).toString('hex')
-
-    // Setup the schedule
-    if (hours > 0) {
-      schedule = schedule.every(hours).hour()
+      schedule: later.parse.text(interval),
+      values: []
     }
 
-    if (minutes > 0) {
-      schedule = schedule.every(minutes).minute()
-    }
-
-    if (config.dev && seconds > 0) {
-      schedule = schedule.every(seconds).second()
-    }
-
-    // Only get days specified in the body and convert them to numbers
-    days = days
-      .filter(function(day) {
-        return !!body[day]
-      })
-      .map(function(day) {
-        return referenceDays.indexOf(day)
-      })
-
-    if (days.length > 0 && days.length < 7) {
-      schedule = schedule.on.apply(schedule, days).dayOfWeek()
-    }
-
-    if (schedule.schedules.length) {
-      job.schedule = {
-        schedules: schedule.schedules
+    jobs.insert(job, (err, result) => {
+      if (err) {
+        console.error('jobs.create error:', err)
+        reject(err)
+        return
       }
 
-      jobs.insert(job, function(err, result) {
-        if (err) {
-          console.error('Create error:', err)
-          reject(err)
-          return
-        }
+      result = result[0]
 
-        result = result[0]
-
-        exports.start(result)
-        resolve(result)
-      })
-    } else {
-      reject(new Error('No schedule specified for job ' + job.title))
-    }
+      exports.start(result)
+      resolve(result)
+    })
   })
 }
 
