@@ -53,7 +53,7 @@ function startServer() {
       js: req.app.locals.js.concat('/js/atomic.min.js', '/js/index.js')
     })
   })
-  
+
   app.get('/list', (req, res) => {
     jobs.getAll().then(array => {
       res.render('list', {
@@ -77,7 +77,8 @@ function startServer() {
     jobs
       .create(job)
       .then(job => {
-        res.sendStatus(200)
+        res.status(200)
+        res.json({ data: job._id, status: 200 })
       })
       .catch(error => {
         res.status(error.status || 500)
@@ -85,56 +86,33 @@ function startServer() {
       })
   })
 
-  app
-    .route('/manage/:id')
-    .get(function(req, res) {
-      jobs
-        .findById(req.params.id)
-        .then(
-          function(job) {
-            res.render('manage', {
-              css: req.app.locals.css.concat('/css/manage.css'),
-              job: job
-            })
-          },
-          function(err) {
-            res.render('error', {
-              error: {
-                title: 'Not found',
-                name: 'Could not find specified monitor value',
-                description: 'There is no current monitor value with id "<b>' + req.params.id + '</b>"'
-              }
-            })
-          }
-        )
-    })
-    .post(function(req, res) {
-      jobs
-        .findOne({
-          id: req.params.id
+  app.get('/manage/:id', (req, res) => {
+    jobs.findById(req.params.id).then(
+      job => {
+        res.render('manage', {
+          css: req.app.locals.css.concat('/css/manage.css'),
+          js: req.app.locals.js.concat('/js/manage.js'),
+          job: job
         })
-        .then(
-          function(job) {
-            jobs.remove(job)
-
-            res.send(200)
-          },
-          function(err) {
-            res.status(404).end(
-              JSON.stringify({
-                error: err
-              })
-            )
+      },
+      err => {
+        res.render('error', {
+          title: 'Not found',
+          error: {
+            name: 'Could not find specified monitor value',
+            description: `There is no current monitor value with id "<b>${req.params.id}</b>"`
           }
-        )
-    })
+        })
+      }
+    )
+  })
 
   // Catch-all/404
   app.use((req, res, next) => {
     res.status(404)
     res.render('error', {
+      title: 'Not Found',
       error: {
-        title: 'Not Found',
         name: '404 - Page not found',
         description: 'The page at <b>' + req.path + '</b> was not found. Go <a href="' + config.domain + '">home</a>.'
       }
