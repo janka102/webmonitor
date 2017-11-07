@@ -73,7 +73,9 @@ exports = module.exports = {
   },
 
   remove(job) {
-    return pify(job.remove)().then(clearJob)
+    return pify(job.remove)
+      .apply(job)
+      .then(clearJob)
   },
 
   create(body) {
