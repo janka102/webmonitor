@@ -1,12 +1,10 @@
 const later = require('later')
-const puppeteer = require('puppeteer')
 const { URL } = require('url')
-
 const Job = require('mongoose').model('Job')
+const browser = require('./browser.js')
 const config = require('./config.js')
 
 const runningJobs = {}
-let browser = null
 
 // Start an interval for the specified job
 exports.start = async function(job) {
@@ -14,13 +12,14 @@ exports.start = async function(job) {
     exports.stop(job)
   }
 
-  if (!browser) {
-    browser = await puppeteer.launch()
-  }
-
   const schedule = later.parse.text(job.interval, !config.production)
 
-  runningJobs[job._id] = later.setInterval(createInterval(job), schedule)
+  runningJobs[job._id] = later.setInterval(() => {
+    browser
+      .execute(job)
+      .then(result => updateValue(job, result))
+      .catch(error => updateValue(job, error))
+  }, schedule)
 }
 
 exports.getAll = function() {
@@ -68,16 +67,18 @@ exports.remove = function(job) {
 // Expose the find function
 exports.find = Job.find.bind(Job)
 
-// Ifa  value changed add it to the DB
-exports.pushValue = async function(job, newValue) {
-  const dbJob = await Job.findById(job._id, { values: 1 }).exec()
-  const oldValue = (dbJob.values.slice(-1)[0] || {}).value
+// If a value changed add it to the DB
+function updateValue(job, newValue) {
+  const oldValue = job.values.slice(-1)[0] || {}
 
-  if (oldValue !== newValue.value) {
-    dbJob.values.push(newValue)
-    await dbJob.save()
+  if (oldValue.kind !== newValue.kind || oldValue.value !== newValue.value) {
+    job.values.push(newValue)
 
-    // email.send(job, oldValue, newValue)
+    // TODO: handle errors
+    job.save((err, job) => {
+      console.log('Change:', oldValue, newValue)
+      // email.send(job, oldValue, newValue)
+    })
   }
 }
 
@@ -154,88 +155,3 @@ exports.create = async function(body) {
   exports.start(job)
   return job
 }
-
-function createInterval(job) {
-  const run = async () => {
-    const page = await browser.newPage()
-    let result = null
-    let error = null
-
-    try {
-      await page.goto(job.url, { timeout: 15 * 1000, waitUnilt: 'networkidle' })
-
-      result = await page.evaluate(query => {
-        let search
-
-        if (query.mode === 'query') {
-          const el = document.querySelector(query.selector)
-          search = el ? el.textContent.trim() : ''
-        } else if (query.mode === 'regex') {
-          const match = document.body.textContent.match(new RegExp(query.selector))
-          search = match ? match[0].trim() : ''
-        }
-
-        const number = Number(search)
-
-        if (search.length && !isNaN(number)) {
-          search = number
-        }
-
-        return search
-      }, job.query)
-    } catch (e) {
-      error = e
-    }
-
-    await page.close()
-
-    if (error) {
-      throw error
-    }
-
-    return {
-      time: new Date(),
-      value: result,
-      kind: typeof result === 'string' ? 'text' : 'number'
-    }
-  }
-
-  return function() {
-    run()
-      .then(result => {
-        console.log('result:', result)
-        exports.pushValue(job, result)
-      })
-      .catch(error => {
-        console.log('puppeteer error:', error)
-        exports.pushValue(job, {
-          time: new Date(),
-          value: error.message,
-          kind: 'error'
-        })
-      })
-  }
-}
-
-process.on('SIGINT', () => {
-  if (browser) {
-    browser.close()
-    browser = null
-  }
-
-  process.exit()
-})
-
-process.on('beforeExit', () => {
-  if (browser) {
-    browser.close()
-    browser = null
-  }
-})
-
-process.on('exit', () => {
-  if (browser) {
-    browser.close()
-    browser = null
-  }
-})
