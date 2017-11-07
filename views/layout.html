@@ -25,8 +25,8 @@
   <nav>
     <div class="container">
       <ul>
-        <li><a href="/"{% if path == '/' %} class="active"{% endif %}>New</a></li>
-        <li><a href="/list"{% if path == '/list' %} class="active"{% endif %}>List</a></li>
+        <li><a href="/"{{ (' class="active"') if path === '/' }}>New</a></li>
+        <li><a href="/list"{{ (' class="active"') if path === '/list' }}>List</a></li>
       </ul>
     </div>
   </nav>

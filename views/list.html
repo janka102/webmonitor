@@ -8,9 +8,11 @@
   {% for job in jobs %}
   <li>
     <h3>{{ job.title }}</h3>
-    <a href="{{ job.url | safe }}" class="monitor-url">{{ job.url }}</a>
+    <a href="{{ job.url }}" class="monitor-url">{{ job.url }}</a>
     <a href="/manage/{{ job._id }}" class="button manage-button">Manage</a>
   </li>
+  {% else %}
+  <li>Nothing to see here. <a href="/">Start monitoring...</a></li>
   {% endfor %}
 </ul>
 {% endblock %}

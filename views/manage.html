@@ -1,5 +1,13 @@
-{% set title = "Manage " + job.title %} {% extends "layout.html" %} {% block body %}
+{% set title = "Manage " + job.title %}
+{% extends "layout.html" %}
+
+{% block body %}
 <h2>{{ job.title }}</h2>
+
+<div class="action-buttons">
+  <button data-id="{{ job._id }}" class="resume-button"{{ (' hidden') if not job.paused }}>Resume</button>
+  <button data-id="{{ job._id }}" class="pause-button" {{ (' hidden') if job.paused }}>Pause</button>
+</div>
 
 <table>
   <thead>
@@ -12,9 +20,9 @@
   <tbody>
     {% for value in job.values %}
     <tr>
-      <td>{{ value.time }}</td>
-      <td>{{ value.value }}</td>
-      <td>{{ value.kind }}</td>
+      <td class="job-time">{{ value.time }}</td>
+      <td class="job-value">{{ value.value }}</td>
+      <td class="job-kind">{{ value.kind }}</td>
     </tr>
     {% endfor %}
   </tbody>
