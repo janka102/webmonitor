@@ -3,6 +3,7 @@ const intervalSelect = document.getElementById('interval')
 const intervalDisplay = document.getElementById('interval-display')
 const form = document.forms.schedule
 const submit = document.getElementById('submit')
+let submitting = false
 
 forEach(dayInputs, input => {
   input.addEventListener('click', updateInterval)
@@ -15,12 +16,18 @@ updateInterval()
 form.addEventListener('submit', event => {
   event.preventDefault()
 
+  if (submitting) {
+    return
+  }
+
+  submitting = true
   const params = []
 
   for (const pair of new FormData(form)) {
     params.push(encodeURIComponent(pair[0]) + '=' + encodeURIComponent(pair[1]))
   }
 
+  // TODO: handle errors
   atomic
     .ajax({
       type: 'POST',
@@ -28,7 +35,7 @@ form.addEventListener('submit', event => {
       data: params.join('&')
     })
     .success(res => {
-      console.log('From server:', res)
+      location = `/manage/${res.data}`
     })
 })
 
