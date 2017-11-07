@@ -38,8 +38,24 @@ puppeteer.launch().then(newBrowser => {
 
 async function execute(job) {
   const page = await browser.newPage()
+  let numRequests = 0
   let result = null
   let error = null
+
+  await page.setRequestInterceptionEnabled(true)
+
+  page.on('request', request => {
+    const { url, resourceType } = request
+
+    // Abort data URIs and images
+    if (/^data:/i.test(url) || resourceType === 'image' || numRequests > 100) {
+      request.abort()
+      return
+    }
+
+    numRequests++
+    request.continue()
+  })
 
   try {
     await page.goto(job.url, { timeout: 15 * 1000, waitUnilt: 'networkidle' })
