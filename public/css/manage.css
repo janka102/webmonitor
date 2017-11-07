@@ -2,6 +2,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
+  margin-bottom: 2rem;
 }
 
 thead {
@@ -18,9 +19,38 @@ tbody tr:nth-child(2n - 1) {
   background-color: rgba(158, 158, 158, 0.2);
 }
 
+tbody tr.error-value {
+  background-color: #ffcdd2;
+  color: #b71c1c;
+}
+
 .action-buttons button {
-  background-color: #2196f3;
   display: inline-block;
   border: none;
+}
+
+#pause-button {
+  background-color: #fdd835;
+}
+
+#pause-button:hover {
+  background-color: #ffeb3b;
+}
+
+#resume-button {
+  background-color: #2196f3;
   color: white;
+}
+
+#resume-button:hover {
+  background-color: #42a5f5;
+}
+
+#delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+#delete-button:hover {
+  background-color: #e53935;
 }

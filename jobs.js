@@ -23,16 +23,6 @@ exports = module.exports = {
     }, schedule)
   },
 
-  startAll() {
-    // TODO: handle errors
-    exports.getAll().then(jobs => {
-      for (const job of jobs) {
-        console.log('Starting:', job._id, job.title)
-        exports.start(job)
-      }
-    })
-  },
-
   getAll() {
     return Job.find().exec()
   },
@@ -43,12 +33,11 @@ exports = module.exports = {
 
   pause(job) {
     if (job.paused && !runningJobs[job._id]) {
-      return
+      return Promise.resolve()
     }
 
     job.paused = true
 
-    // TODO: handle errors
     return pify(job.save)
       .apply(job)
       .then(clearJob)
@@ -56,12 +45,11 @@ exports = module.exports = {
 
   resume(job) {
     if (!job.paused) {
-      return
+      return Promise.resolve()
     }
 
     job.paused = false
 
-    // TODO: handle errors
     return pify(job.save)
       .apply(job)
       .then(exports.restart) // restart just in case
@@ -152,6 +140,13 @@ exports = module.exports = {
   }
 }
 
+// TODO: handle errors
+exports.getAll().then(jobs => {
+  for (const job of jobs) {
+    exports.start(job)
+  }
+})
+
 function clearJob(job) {
   if (runningJobs[job._id]) {
     runningJobs[job._id].clear()
@@ -169,7 +164,11 @@ function updateValue(job, newValue) {
     pify(job.save)
       .apply(job)
       .then(job => {
-        console.log('Change:', oldValue, newValue)
+        console.log(
+          `${job._id}: ` +
+            (oldValue.time ? `(${oldValue.time.toLocaleString()}) ${oldValue.value} => ` : '') +
+            `(${newValue.time.toLocaleString()}) ${newValue.value}`
+        )
         // email.send(job, oldValue, newValue)
       })
   }

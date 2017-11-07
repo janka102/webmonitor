@@ -47,7 +47,7 @@ function updateInterval() {
     days.length = 0
   }
 
-  intervalDisplay.textContent = `Will check ${days.join(', ')} ${interval}`
+  intervalDisplay.textContent = `Will check ${interval}${days.length ? ' on ' + days.join(', ') : ''}`
 }
 
 function forEach(list, fn) {
