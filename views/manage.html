@@ -5,9 +5,9 @@
 <h2>{{ job.title }}</h2>
 
 <div class="action-buttons">
-  <button id="pause-button"{{ ( ' hidden') if job.paused }}>Pause</button>
-  <button id="resume-button"{{ ( ' hidden') if not job.paused }}>Resume</button>
-  <button id="delete-button"{>Delete</button>
+  <button id="pause-button"{{ ' hidden' if job.paused }}>Pause</button>
+  <button id="resume-button"{{ ' hidden' if not job.paused }}>Resume</button>
+  <button id="delete-button">Delete</button>
 </div>
 
 <table>

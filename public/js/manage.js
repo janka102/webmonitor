@@ -43,7 +43,7 @@ deleteButton.addEventListener('click', event => {
       url: location.pathname + '/delete'
     })
     .success(res => {
-      location = '/'
+      location = '/list'
     })
 })
 
