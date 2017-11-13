@@ -98,7 +98,6 @@ input:-moz-ui-invalid {
   display: block;
   border: 1px solid #9e9e9e;
   border-right: none;
-  padding: 0 1rem;
   line-height: 2rem;
   transition: background-color 150ms;
 }

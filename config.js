@@ -8,8 +8,8 @@ exports = module.exports = {
     service: process.env.EMAIL_SERVICE,
     username: process.env.EMAIL_USER,
     password: process.env.EMAIL_PASSWORD,
-    to: process.env.EMAIL_TO,
     from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_TO,
     consoleOnly: false
   }
 }

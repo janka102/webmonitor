@@ -1,71 +1,45 @@
-var Promise = require('bluebird'),
-    nodemailer = require('nodemailer'),
-    // swig = require('swig'),
-    util = require('util'),
-    config = require('./config'),
-    transporter = nodemailer.createTransport({
-        service: config.email.service,
-        auth: {
-            user: config.email.user,
-            pass: config.email.pass
-        }
-    }),
-    // For some reason Promise.promisify didn't work
-    sendMail = function(options) {
-        return new Promise(function(resolve, reject) {
-            transporter.sendMail(options, function(err, info) {
-                if (err) {
-                    return reject(err);
-                }
+const nodemailer = require('nodemailer')
+const nunjucks = require('nunjucks').configure('./views')
+const pify = require('pify')
+const config = require('./config.js')
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  auth: {
+    user: config.email.username,
+    pass: config.email.password
+  }
+})
+const sendMail = pify(transporter.sendMail.bind(transporter))
 
-                resolve(info);
-            });
-        });
-    };
-
-exports.send = function(job, oldValue, newValue) {
-    if (!config.email.toConsole) {
-        sendMail({
-            from: config.email.fromEmail,
-            to: config.email.toEmail,
-            subject: 'WebMonitor - ' + job.title,
-            html: formatEmail(job, oldValue, newValue)
-        }).then(undefined, function(err) {
-            console.error('Email send error:', error);
-        });
+exports = module.exports = {
+  send(job, oldValue, newValue) {
+    if (!config.email.consoleOnly) {
+      sendMail({
+        from: config.email.from,
+        to: config.email.to,
+        subject: 'WebMonitor - ' + job.title,
+        html: formatEmail(job, oldValue, newValue)
+      }).catch(error => {
+        console.error('Email send error:', error)
+      })
     } else {
-        console.log({
-            title: job.title,
-            url: job.url,
-            id: job.id,
-            old: oldValue,
-            new: newValue
-        });
+      console.log('Send Email:', {
+        title: job.title,
+        url: job.url,
+        id: job.id,
+        old: oldValue,
+        new: newValue
+      })
     }
+  }
 }
 
 function formatEmail(job, oldValue, newValue) {
-    return swig.renderFile('./views/email.html', {
-        job: job,
-        oldValue: oldValue,
-        newValue: newValue,
-        domain: config.domain
-    });
-}
-
-function escapeHTML(string) {
-    return string.replace(/[&<>"']/g, function(val) {
-        switch (val) {
-            case '&':
-                return '&amp;';
-            case '<':
-                return '&lt;';
-            case '>':
-                return '&gt;';
-            case '"':
-                return '&quot;';
-            case '\'':
-                return '&#39;';
-        }
-    });
+  return nunjucks.render('email.html', {
+    job: job,
+    oldValue: oldValue,
+    newValue: newValue,
+    domain: config.domain
+  })
 }
