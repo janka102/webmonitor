@@ -29,7 +29,7 @@ router.post('/monitor', (req, res) => {
     url: typeof req.body.url === 'string' ? req.body.url : '',
     selector: typeof req.body.selector === 'string' ? req.body.selector : '',
     mode: typeof req.body.mode === 'string' ? req.body.mode : '',
-    days: req.body.days && typeof req.body.days === 'object' ? Object.keys(req.body.keys) : [],
+    days: req.body.days && typeof req.body.days === 'object' ? Object.keys(req.body.days) : [],
     interval: typeof req.body.interval === 'string' ? req.body.interval : ''
   }
 

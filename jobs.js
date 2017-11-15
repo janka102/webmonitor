@@ -71,7 +71,7 @@ exports = module.exports = {
     let url = body.url
 
     // Has to be HTTP
-    if (!/^https?:\/\//.test(body.url)) {
+    if (!/^https?:\/\//i.test(body.url)) {
       if (/^[a-z]+:\/\//i.test(body.url)) {
         return Promise.reject({ message: 'URL must be HTTP(S)', status: 400 })
       }
@@ -86,7 +86,7 @@ exports = module.exports = {
       return Promise.reject({ message: 'URL invalid', status: 400 })
     }
 
-    const weekDays = 'sunday monday tuesday wednesday thrusday friday saturday'.split(' ')
+    const weekDays = 'sunday monday tuesday wednesday thursday friday saturday'.split(' ')
     const days = body.days.filter(day => weekDays.indexOf(day) >= 0).join(',')
     let interval = 'every '
 

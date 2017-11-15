@@ -43,7 +43,7 @@ async function execute(job) {
   let error = null
 
   try {
-    await page.goto(job.url, { timeout: 15 * 1000, waitUnilt: 'networkidle' })
+    await page.goto(job.url, { timeout: 15 * 1000, waitUntil: 'networkidle' })
 
     result = await page.evaluate(query => {
       let search = ''
