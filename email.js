@@ -3,8 +3,8 @@ const nunjucks = require('nunjucks').configure('./views')
 const pify = require('pify')
 const config = require('./config.js')
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
+  host: config.email.host,
+  port: config.email.port,
   auth: {
     user: config.email.username,
     pass: config.email.password

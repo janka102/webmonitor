@@ -5,8 +5,9 @@ exports = module.exports = {
   domain: process.env.MONITOR_DOMAIN,
   mongoose: process.env.MONGOOSE_URL || `tingodb://${__dirname}/data`,
   email: {
-    service: process.env.EMAIL_SERVICE,
-    username: process.env.EMAIL_USER,
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    username: process.env.EMAIL_USERNAME,
     password: process.env.EMAIL_PASSWORD,
     from: process.env.EMAIL_FROM,
     to: process.env.EMAIL_TO,
