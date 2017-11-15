@@ -1,6 +1,7 @@
-const nodemailer = require('nodemailer')
 const nunjucks = require('nunjucks').configure('./views')
 const pify = require('pify')
+const nodemailer = require('nodemailer')
+const htmlToText = require('nodemailer-html-to-text').htmlToText
 const config = require('./config.js')
 const transporter = nodemailer.createTransport({
   host: config.email.host,
@@ -11,6 +12,8 @@ const transporter = nodemailer.createTransport({
   }
 })
 const sendMail = pify(transporter.sendMail.bind(transporter))
+
+transporter.use('compile', htmlToText());
 
 exports = module.exports = {
   send(job, oldValue, newValue) {
