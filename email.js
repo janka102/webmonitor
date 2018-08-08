@@ -1,8 +1,8 @@
-const nunjucks = require('nunjucks').configure('./views')
-const pify = require('pify')
-const nodemailer = require('nodemailer')
-const htmlToText = require('nodemailer-html-to-text').htmlToText
-const config = require('./config.js')
+const nunjucks = require('nunjucks').configure('./views');
+const pify = require('pify');
+const nodemailer = require('nodemailer');
+const htmlToText = require('nodemailer-html-to-text').htmlToText;
+const config = require('./config.js');
 const transporter = nodemailer.createTransport({
   host: config.email.host,
   port: config.email.port,
@@ -10,8 +10,8 @@ const transporter = nodemailer.createTransport({
     user: config.email.username,
     pass: config.email.password
   }
-})
-const sendMail = pify(transporter.sendMail.bind(transporter))
+});
+const sendMail = pify(transporter.sendMail.bind(transporter));
 
 transporter.use('compile', htmlToText());
 
@@ -23,9 +23,9 @@ exports = module.exports = {
         to: config.email.to,
         subject: 'WebMonitor - ' + job.title,
         html: formatEmail(job, oldValue, newValue)
-      }).catch(error => {
-        console.error('Email send error:', error)
-      })
+      }).catch((error) => {
+        console.error('Email send error:', error);
+      });
     } else {
       console.log('Send Email:', {
         title: job.title,
@@ -33,10 +33,10 @@ exports = module.exports = {
         id: job.id,
         old: oldValue,
         new: newValue
-      })
+      });
     }
   }
-}
+};
 
 function formatEmail(job, oldValue, newValue) {
   return nunjucks.render('email.html', {
@@ -44,5 +44,5 @@ function formatEmail(job, oldValue, newValue) {
     oldValue: oldValue,
     newValue: newValue,
     domain: config.domain
-  })
+  });
 }
