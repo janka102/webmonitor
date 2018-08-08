@@ -29,20 +29,20 @@ tbody tr.error-value {
   border: none;
 }
 
-#pause-button {
+#disable-button {
   background-color: #fdd835;
 }
 
-#pause-button:hover {
+#disable-button:hover {
   background-color: #ffeb3b;
 }
 
-#resume-button {
+#enable-button {
   background-color: #2196f3;
   color: white;
 }
 
-#resume-button:hover {
+#enable-button:hover {
   background-color: #42a5f5;
 }
 

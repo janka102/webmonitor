@@ -3,7 +3,7 @@ exports = module.exports = {
   production: process.env.NODE_ENV === 'production',
   port: process.env.PORT || 3000,
   domain: process.env.MONITOR_DOMAIN,
-  mongoose: process.env.MONGOOSE_URL || `tingodb://${__dirname}/data`,
+  mongoose: process.env.MONGOOSE_URL || `mongodb://localhost:21017/webmonitor`,
   email: {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -13,12 +13,12 @@ exports = module.exports = {
     to: process.env.EMAIL_TO,
     consoleOnly: false
   }
-}
+};
 
 if (!exports.production) {
-  exports.email.consoleOnly = true
+  exports.email.consoleOnly = true;
 }
 
 if (!exports.domain) {
-  exports.domain = `http://localhost:${exports.port}`
+  exports.domain = `http://localhost:${exports.port}`;
 }
