@@ -1,24 +1,30 @@
 const puppeteer = require('puppeteer');
+const config = require('./config.js');
 
 exports = module.exports = {
-  async execute (job) {
-    const browser = await puppeteer.launch();
+  async execute(job) {
+    const browser = await puppeteer.launch({ args: config.puppeteer_args });
     const page = await browser.newPage();
 
     let result = null;
     let error = null;
 
     try {
-      await page.goto(job.url, { timeout: 15 * 1000, waitUntil: 'networkidle' });
+      await page.goto(job.url, {
+        timeout: 15 * 1000,
+        waitUntil: 'networkidle2'
+      });
 
-      result = await page.evaluate(query => {
+      result = await page.evaluate((query) => {
         let search = '';
 
         if (query.mode === 'query') {
           const el = document.querySelector(query.selector);
           search = el ? el.textContent.trim() : '';
         } else if (query.mode === 'regex') {
-          const match = document.body.textContent.match(new RegExp(query.selector));
+          const match = document.body.textContent.match(
+            new RegExp(query.selector)
+          );
           search = match ? match[0].trim() : '';
         }
 
@@ -37,11 +43,11 @@ exports = module.exports = {
     await browser.close();
 
     if (error) {
-      throw {
+      return Promise.reject({
         time: new Date(),
         value: error.message,
         kind: 'error'
-      };
+      });
     }
 
     return {

@@ -4,6 +4,9 @@ exports = module.exports = {
   port: process.env.PORT || 3000,
   domain: process.env.MONITOR_DOMAIN,
   mongoose: process.env.MONGOOSE_URL || `mongodb://localhost:21017/webmonitor`,
+  puppeteer_args: process.env.PUPPETEER_ARGS
+    ? process.env.PUPPETEER_ARGS.split(' ')
+    : [],
   email: {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
