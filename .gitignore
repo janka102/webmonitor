@@ -7,9 +7,3 @@ node_modules/
 
 # Dotenv
 .env
-
-# File-based DB
-data/**
-
-## Keep all .gitkeep files
-!/**/.gitkeep
