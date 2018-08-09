@@ -71,22 +71,22 @@ router.get('/manage/:id', (req, res) => {
   );
 });
 
-router.post('/manage/:id/pause', (req, res) => {
+router.post('/manage/:id/enable', (req, res) => {
   // TODO: handle errors
   jobs
     .findById(req.params.id)
-    .then(jobs.pause)
+    .then(jobs.enable)
     .then(() => {
       res.status(200);
       res.end();
     });
 });
 
-router.post('/manage/:id/resume', (req, res) => {
+router.post('/manage/:id/disable', (req, res) => {
   // TODO: handle errors
   jobs
     .findById(req.params.id)
-    .then(jobs.resume)
+    .then(jobs.disable)
     .then(() => {
       res.status(200);
       res.end();

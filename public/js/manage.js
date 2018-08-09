@@ -1,5 +1,5 @@
-const pauseButton = document.getElementById('pause-button');
-const resumeButton = document.getElementById('resume-button');
+const enableButton = document.getElementById('enable-button');
+const disableButton = document.getElementById('disable-button');
 const deleteButton = document.getElementById('delete-button');
 
 forEach(document.querySelectorAll('.job-time'), (el) => {
@@ -12,27 +12,27 @@ forEach(document.querySelectorAll('.job-kind'), (el) => {
   }
 });
 
-pauseButton.addEventListener('click', (event) => {
+enableButton.addEventListener('click', (event) => {
   atomic
     .ajax({
       type: 'POST',
-      url: location.pathname + '/pause'
+      url: location.pathname + '/enable'
     })
     .success((res) => {
-      pauseButton.hidden = true;
-      resumeButton.hidden = false;
+      enableButton.hidden = true;
+      disableButton.hidden = false;
     });
 });
 
-resumeButton.addEventListener('click', (event) => {
+disableButton.addEventListener('click', (event) => {
   atomic
     .ajax({
       type: 'POST',
-      url: location.pathname + '/resume'
+      url: location.pathname + '/disable'
     })
     .success((res) => {
-      resumeButton.hidden = true;
-      pauseButton.hidden = false;
+      disableButton.hidden = true;
+      enableButton.hidden = false;
     });
 });
 
@@ -43,7 +43,7 @@ deleteButton.addEventListener('click', (event) => {
       url: location.pathname + '/delete'
     })
     .success((res) => {
-      location = '/list';
+      location.pathname = '/list';
     });
 });
 

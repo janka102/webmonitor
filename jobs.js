@@ -10,7 +10,7 @@ const runningJobs = {};
 
 exports = module.exports = {
   start(job) {
-    if (job.paused || runningJobs[job._id]) {
+    if (!job.enabled || runningJobs[job._id]) {
       return;
     }
 
@@ -32,24 +32,24 @@ exports = module.exports = {
     return Job.findById(id, projection).exec();
   },
 
-  pause(job) {
-    if (job.paused && !runningJobs[job._id]) {
+  enable(job) {
+    if (job.enabled && runningJobs[job._id]) {
       return Promise.resolve();
     }
 
-    job.paused = true;
+    job.enabled = true;
 
     return pify(job.save)
       .apply(job)
       .then(clearJob);
   },
 
-  resume(job) {
-    if (!job.paused) {
+  disable(job) {
+    if (!job.enabled) {
       return Promise.resolve();
     }
 
-    job.paused = false;
+    job.enabled = false;
 
     return pify(job.save)
       .apply(job)
@@ -68,87 +68,19 @@ exports = module.exports = {
   },
 
   create(body) {
-    let url = body.url;
-
-    // Has to be HTTP
-    if (!/^https?:\/\//i.test(body.url)) {
-      if (/^[a-z]+:\/\//i.test(body.url)) {
-        return Promise.reject({ message: 'URL must be HTTP(S)', status: 400 });
-      }
-
-      url = `http://${body.url}`;
-    }
-
-    try {
-      // Throws error if invalid
-      url = new URL(url).href;
-    } catch (e) {
-      return Promise.reject({ message: 'URL invalid', status: 400 });
-    }
-
-    const weekDays = [
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday'
-    ];
-    const days = body.days
-      .filter((day) => weekDays.indexOf(day) >= 0)
-      .join(',');
-    let interval = 'every ';
-
-    switch (body.interval) {
-      case '1':
-        interval += '5 minutes';
-        break;
-      case '2':
-        interval += '15 minutes';
-        break;
-      case '3':
-        interval += '30 minutes';
-        break;
-      case '4':
-        interval += '1 hour';
-        break;
-      case '5':
-        interval += '3 hours';
-        break;
-      case '6':
-        interval += '6 hours';
-        break;
-      case '7':
-        interval += '12 hours';
-        break;
-      default:
-        if (body.interval === '0' && !config.production) {
-          interval += '15 seconds';
-        } else {
-          interval += '1 hour';
-        }
-        break;
-    }
-
-    if (days.length) {
-      interval += ` on ${days}`;
-    }
-
-    return Job.create({
-      title: body.title,
-      url: url,
-      query: {
-        // Default mode is 'query'
-        mode:
-          body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
-        selector: body.selector
-      },
-      interval: interval
-    }).then((job) => {
+    return Job.create(bodyToJob(body)).then((job) => {
       exports.start(job);
       return job;
     });
+  },
+
+  edit(id, body) {
+    return Job.findByIdAndUpdate(id, bodyToJob(body), { new: true }).then(
+      (job) => {
+        exports.restart(job);
+        return job;
+      }
+    );
   }
 };
 
@@ -186,4 +118,83 @@ function updateValue(job, newValue) {
         email.send(job, oldValue.value, newValue.value);
       });
   }
+}
+
+function bodyToJob(body) {
+  let url = body.url;
+
+  // Has to be HTTP
+  if (!/^https?:\/\//i.test(body.url)) {
+    if (/^[a-z]+:\/\//i.test(body.url)) {
+      return Promise.reject({ message: 'URL must be HTTP(S)', status: 400 });
+    }
+
+    url = `http://${body.url}`;
+  }
+
+  try {
+    // Throws error if invalid
+    url = new URL(url).href;
+  } catch (e) {
+    return Promise.reject({ message: 'URL invalid', status: 400 });
+  }
+
+  const weekDays = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday'
+  ];
+  const days = body.days.filter((day) => weekDays.indexOf(day) >= 0).join(',');
+  let interval = 'every ';
+
+  switch (body.interval) {
+    case '1':
+      interval += '5 minutes';
+      break;
+    case '2':
+      interval += '15 minutes';
+      break;
+    case '3':
+      interval += '30 minutes';
+      break;
+    case '4':
+      interval += '1 hour';
+      break;
+    case '5':
+      interval += '3 hours';
+      break;
+    case '6':
+      interval += '6 hours';
+      break;
+    case '7':
+      interval += '12 hours';
+      break;
+    default:
+      if (body.interval === '0' && !config.production) {
+        interval += '15 seconds';
+      } else {
+        interval += '1 hour';
+      }
+      break;
+  }
+
+  if (days.length) {
+    interval += ` on ${days}`;
+  }
+
+  return {
+    title: body.title,
+    url: url,
+    query: {
+      // Default mode is 'query'
+      mode:
+        body.mode === 'query' || body.mode === 'regex' ? body.mode : 'query',
+      selector: body.selector
+    },
+    interval: interval
+  };
 }
