@@ -24,9 +24,9 @@ tbody tr.error-value {
   color: #b71c1c;
 }
 
-.action-buttons button {
+.action-buttons button,
+.action-buttons .button {
   display: inline-block;
-  border: none;
 }
 
 #disable-button {

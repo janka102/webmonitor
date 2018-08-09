@@ -1,0 +1,110 @@
+{% macro htmlattr(attr, value, selfValue=false) %}
+{% if value %} {{ attr }}="{{ attr if selfValue else value }}"{% endif %}
+{% endmacro %}
+
+{% macro jobForm(action, job={}, submitText='Submit') %}
+{% if job.interval %}
+  {% set interval = job.interval %}
+{% else %}
+  {% set interval = '' %}  
+{% endif %}
+
+{% if job.query %}
+  {% if job.query.selector %}
+    {% set selector = job.query.selector %}
+  {% else %}
+    {% set selector = '' %}
+  {% endif %}
+
+  {% if job.query.mode %}
+    {% set mode = job.query.mode %}
+  {% else %}
+    {% set mode = '' %}
+  {% endif %}
+{% else %}
+  {% set selector = '' %}
+  {% set mode = '' %}
+{% endif %}
+
+<form name="schedule" action="{{ action }}" method="post">
+  <div class="form-group">
+    <input id="title" name="title" type="text" required{{ htmlattr('value', job.title) }}>
+    <label for="title" class="input-label" data-placeholder="My Awesome Value">Title</label>
+  </div>
+
+  <div class="form-group">
+    <input id="url" name="url" type="text" required{{ htmlattr('value', job.url) }}>
+    <label for="url" class="input-label" data-placeholder="http://example.com">URL</label>
+  </div>
+
+  <div class="form-group">
+    <input id="selector" name="selector" type="text" required{{ htmlattr('value', selector) }}>
+    <label for="selector" class="input-label" data-placeholder="#a.selector or R(e)g\1xp">Selector</label>
+  </div>
+
+  <div class="form-group">
+    <ul class="select-group">
+      <li>
+        <input id="query-mode" name="mode" type="radio" value="query" {{ htmlattr('checked', mode === 'query', true) }}>
+        <label for="query-mode">Query</label>
+      </li>
+      <li>
+        <input id="regex-mode" name="mode" type="radio" value="regex" {{ htmlattr('checked', mode === 'regex', true) }}>
+        <label for="regex-mode">Regex</label>
+      </li>
+    </ul>
+  </div>
+
+  <div class="form-group">
+    <ul id="day-picker" class="select-group">
+      <li>
+        <input id="sunday" name="days[sunday]" type="checkbox" {{ htmlattr('checked', interval.includes('sunday'), true) }}>
+        <label for="sunday">Sun</label>
+      </li>
+      <li>
+        <input id="monday" name="days[monday]" type="checkbox" {{ htmlattr('checked', interval.includes('monday'), true) }}>
+        <label for="monday">Mon</label>
+      </li>
+      <li>
+        <input id="tuesday" name="days[tuesday]" type="checkbox" {{ htmlattr('checked', interval.includes('tuesday'), true) }}>
+        <label for="tuesday">Tue</label>
+      </li>
+      <li>
+        <input id="wednesday" name="days[wednesday]" type="checkbox" {{ htmlattr('checked', interval.includes('wednesday'), true)
+          }}>
+        <label for="wednesday">Wed</label>
+      </li>
+      <li>
+        <input id="thursday" name="days[thursday]" type="checkbox" {{ htmlattr('checked', interval.includes('thursday'), true) }}>
+        <label for="thursday">Thu</label>
+      </li>
+      <li>
+        <input id="friday" name="days[friday]" type="checkbox" {{ htmlattr('checked', interval.includes('friday'), true) }}>
+        <label for="friday">Fri</label>
+      </li>
+      <li>
+        <input id="saturday" name="days[saturday]" type="checkbox" {{ htmlattr('checked', interval.includes('saturday'), true) }}>
+        <label for="saturday">Sat</label>
+      </li>
+    </ul>
+    <div class="form-group">
+      <select id="interval" name="interval">
+        {% if not production %}
+        <option value="0" {{ htmlattr('selected', interval.includes('every 15 seconds'), true) }}>every 15 seconds</option>
+        {% endif %}
+        <option value="1" {{ htmlattr('selected', interval.includes('every 5 minutes'), true) }}>every 5 minutes</option>
+        <option value="2" {{ htmlattr('selected', interval.includes('every 15 minutes'), true) }}>every 15 minutes</option>
+        <option value="3" {{ htmlattr('selected', interval.includes('every 30 minutes'), true) }}>every 30 minutes</option>
+        <option value="4" {{ htmlattr('selected', interval.includes('every hour') or interval.includes('every 1 hour'), true) }}>every hour</option>
+        <option value="5" {{ htmlattr('selected', interval.includes('every 3 hours'), true) }}>every 3 hours</option>
+        <option value="6" {{ htmlattr('selected', interval.includes('every 6 hours'), true) }}>every 6 hours</option>
+        <option value="7" {{ htmlattr('selected', interval.includes('every 12 hours'), true) }}>every 12 hours</option>
+      </select>
+      <label for="interval" class="input-label">Interval</label>
+    </div>
+    <div id="interval-display"></div>
+  </div>
+
+  <button id="submit" type="submit">{{ submitText }}</button>
+</form>
+{% endmacro %}

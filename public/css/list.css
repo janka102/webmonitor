@@ -26,11 +26,10 @@
 .monitor-list .manage-button {
   background-color: #2196f3;
   display: inline-block;
-  border: none;
   color: white;
 }
 
 .monitor-list .manage-button:hover {
   background-color: #42A5F5;
-  text-decoration: none;
+  color: white;
 }

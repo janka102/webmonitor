@@ -8,8 +8,8 @@ router.get('/', (req, res) => {
   res.render('index', {
     path: '/',
     production: config.production,
-    css: req.app.locals.css.concat('/css/index.css'),
-    js: req.app.locals.js.concat('/js/atomic.min.js', '/js/index.js')
+    css: req.app.locals.css.concat('/css/form.css'),
+    js: req.app.locals.js.concat('/js/atomic.min.js', '/js/form.js')
   });
 });
 
@@ -102,6 +102,36 @@ router.post('/manage/:id/delete', (req, res) => {
       res.status(200);
       res.end();
     });
+});
+
+router.get('/manage/:id/edit', (req, res) => {
+  jobs.findById(req.params.id).then((job) => {
+    res.render('edit', {
+      job: job,
+      production: config.production,
+      css: req.app.locals.css.concat('/css/form.css'),
+      js: req.app.locals.js.concat('/js/atomic.min.js', '/js/form.js')
+    });
+  });
+});
+
+router.post('/manage/:id/edit', (req, res) => {
+  const job = {
+    title: typeof req.body.title === 'string' ? req.body.title : '',
+    url: typeof req.body.url === 'string' ? req.body.url : '',
+    selector: typeof req.body.selector === 'string' ? req.body.selector : '',
+    mode: typeof req.body.mode === 'string' ? req.body.mode : '',
+    days:
+      req.body.days && typeof req.body.days === 'object'
+        ? Object.keys(req.body.days)
+        : [],
+    interval: typeof req.body.interval === 'string' ? req.body.interval : ''
+  };
+
+  jobs.edit(req.params.id, job).then((job) => {
+    res.status(200);
+    res.json({ data: job._id, status: 200 });
+  });
 });
 
 module.exports = router;

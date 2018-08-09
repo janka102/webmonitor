@@ -1,86 +1,8 @@
 {% extends "layout.html" %}
+{% import "templates/macros.html" as macros %}
 
 {% block body %}
 <h2>Submit a value to monitor</h2>
 
-<form name="schedule" action="/monitor" method="post">
-  <div class="form-group">
-    <input id="title" name="title" type="text" required>
-    <label for="title" class="input-label" data-placeholder="My Awesome Value">Title</label>
-  </div>
-
-  <div class="form-group">
-    <input id="url" name="url" type="text" required>
-    <label for="url" class="input-label" data-placeholder="http://example.com">URL</label>
-  </div>
-
-  <div class="form-group">
-    <input id="selector" name="selector" type="text" required>
-    <label for="selector" class="input-label" data-placeholder="#a.selector or R(e)g\1xp">Selector</label>
-  </div>
-
-  <div class="form-group">
-    <ul class="select-group">
-      <li>
-        <input id="query-mode" name="mode" type="radio" value="query" checked>
-        <label for="query-mode">Query</label>
-      </li>
-      <li>
-        <input id="regex-mode" name="mode" type="radio" value="regex">
-        <label for="regex-mode">Regex</label>
-      </li>
-    </ul>
-  </div>
-
-  <div class="form-group">
-    <ul id="day-picker" class="select-group">
-      <li>
-        <input id="sunday" name="days[sunday]" type="checkbox">
-        <label for="sunday">Sun</label>
-      </li>
-      <li>
-        <input id="monday" name="days[monday]" type="checkbox">
-        <label for="monday">Mon</label>
-      </li>
-      <li>
-        <input id="tuesday" name="days[tuesday]" type="checkbox">
-        <label for="tuesday">Tue</label>
-      </li>
-      <li>
-        <input id="wednesday" name="days[wednesday]" type="checkbox">
-        <label for="wednesday">Wed</label>
-      </li>
-      <li>
-        <input id="thursday" name="days[thursday]" type="checkbox">
-        <label for="thursday">Thu</label>
-      </li>
-      <li>
-        <input id="friday" name="days[friday]" type="checkbox">
-        <label for="friday">Fri</label>
-      </li>
-      <li>
-        <input id="saturday" name="days[saturday]" type="checkbox">
-        <label for="saturday">Sat</label>
-      </li>
-    </ul>
-    <div class="form-group">
-      <select id="interval" name="interval">
-        {% if not production %}
-        <option value="0">every 15 seconds</option>
-        {% endif %}
-        <option value="1">every 5 minutes</option>
-        <option value="2">every 15 minutes</option>
-        <option value="3">every 30 minutes</option>
-        <option value="4" selected>every hour</option>
-        <option value="5">every 3 hours</option>
-        <option value="6">every 6 hours</option>
-        <option value="7">every 12 hours</option>
-      </select>
-      <label for="interval" class="input-label">Interval</label>
-    </div>
-    <div id="interval-display"></div>
-  </div>
-
-  <button id="submit" type="submit">Monitor</button>
-</form>
+{{ macros.jobForm('/monitor', { mode: 'query', interval:'every hour' }, 'Monitor') }}
 {% endblock %}

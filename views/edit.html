@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% import "templates/macros.html" as macros %}
+
+{% block body %}
+<h2>Edit {{ job.title }}</h2>
+
+{{ macros.jobForm('/manage/' + job.id + '/edit', job) }}
+{% endblock %}

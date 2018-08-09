@@ -7,6 +7,7 @@
 <div class="action-buttons">
   <button id="disable-button"{{ ' hidden' if not job.enabled }}>Disable</button>
   <button id="enable-button"{{ ' hidden' if job.enabled }}>Enable</button>
+  <a href="/manage/{{job.id}}/edit" class="button">Edit</a>
   <button id="delete-button">Delete</button>
 </div>
 
