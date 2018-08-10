@@ -2,6 +2,7 @@ const nunjucks = require('nunjucks').configure('./views');
 const pify = require('pify');
 const nodemailer = require('nodemailer');
 const htmlToText = require('nodemailer-html-to-text').htmlToText;
+const feed = require('./feed.js');
 const config = require('./config.js');
 const transporter = nodemailer.createTransport({
   host: config.email.host,
@@ -15,18 +16,24 @@ const sendMail = pify(transporter.sendMail.bind(transporter));
 
 transporter.use('compile', htmlToText());
 
-exports = module.exports = {
+Object.assign(exports, {
   send(job, oldValue, newValue) {
-    if (!config.email.consoleOnly) {
+    if (config.feed) {
+      feed.addItem(job, oldValue, newValue);
+    }
+
+    if (config.email.enabled) {
       sendMail({
         from: config.email.from,
         to: config.email.to,
         subject: 'WebMonitor - ' + job.title,
-        html: formatEmail(job, oldValue, newValue)
+        html: formatHTML(job, oldValue.value, newValue.value)
       }).catch((error) => {
         console.error('Email send error:', error);
       });
-    } else {
+    }
+
+    if (config.consoleUpdate) {
       console.log('Send Email:', {
         title: job.title,
         url: job.url,
@@ -35,10 +42,11 @@ exports = module.exports = {
         new: newValue
       });
     }
-  }
-};
+  },
+  formatHTML: formatHTML
+});
 
-function formatEmail(job, oldValue, newValue) {
+function formatHTML(job, oldValue, newValue) {
   return nunjucks.render('email.html', {
     job: job,
     oldValue: oldValue,

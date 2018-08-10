@@ -1,5 +1,6 @@
 const express = require('express');
 const jobs = require('./jobs.js');
+const feed = require('./feed.js');
 const config = require('./config.js');
 
 const router = express.Router();
@@ -133,5 +134,7 @@ router.post('/manage/:id/edit', (req, res) => {
     res.json({ data: job._id, status: 200 });
   });
 });
+
+router.use('/feed', feed.router);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const later = require('later');
 const pify = require('pify');
 const { URL } = require('url');
 const Job = require('mongoose').model('Job');
-const email = require('./email.js');
+const notify = require('./notify.js');
 const browser = require('./browser.js');
 const config = require('./config.js');
 
@@ -115,7 +115,7 @@ function updateValue(job, newValue) {
               : '') +
             `(${newValue.time.toLocaleString()}) ${newValue.value}`
         );
-        email.send(job, oldValue.value, newValue.value);
+        notify.send(job, oldValue, newValue);
       });
   }
 }
