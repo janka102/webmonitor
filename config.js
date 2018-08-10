@@ -1,4 +1,4 @@
-exports = module.exports = {
+Object.assign(exports, {
   root: __dirname,
   production: process.env.NODE_ENV === 'production',
   port: process.env.PORT || 3000,

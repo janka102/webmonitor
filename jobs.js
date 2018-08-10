@@ -8,7 +8,7 @@ const config = require('./config.js');
 
 const runningJobs = {};
 
-exports = module.exports = {
+Object.assign(exports, {
   start(job) {
     if (!job.enabled || runningJobs[job._id]) {
       return;
@@ -82,7 +82,7 @@ exports = module.exports = {
       }
     );
   }
-};
+});
 
 // TODO: handle errors
 exports.getAll().then((jobs) => {
