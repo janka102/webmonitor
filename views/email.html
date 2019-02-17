@@ -1,13 +1,15 @@
 <div style="color:#212121; margin:auto; font-size:18px; font-family:sans-serif; width:100%; background-color:#fff;">
-  <h2 style="color:#FFF; font-size:30px; background-color:#2196F3; padding:25px 30px; margin:0; vertical-align:middle; border-bottom: 5px solid #1976D2;">{{ job.title }}</h2>
-  <div style="display:block; padding:30px;">
-    <span style="display:block; margin-bottom:40px">A value on your page <b><a href="{{ job.url }}" style="color:#009688;">{{ job.url }}</a></b> changed.</span>
-    <span style="display:block;">It was:</span>
-    <span style="display:block; border-left:2px solid #FF5252; background-color:#F5F5F5; padding:5px 10px; margin:10px 25px 35px;">{{ oldValue }}</span>
-    <span style="display:block;">It is now:</span>
-    <span style="display:block; border-left:2px solid #00C853; background-color:#F5F5F5; padding:5px 10px; margin:10px 25px 35px;">{{ newValue }}</span>
+  <h2 style="color:#FFF; font-size:24px; background-color:#2196F3; padding:25px 30px; margin:0; vertical-align:middle; border-bottom: 5px solid #1976D2;">{{ job.title }}</h2>
+  <div style="padding:30px;">
+    <p style="margin:0 0 40px;">A value on your page <a href="{{ job.url }}" style="color:#009688;">{{ job.url }}</a> changed.</p>
+    <p style="margin:0;">It was:
+      <span style="display:block; border-left:2px solid #FF5252; background-color:#F5F5F5; padding:5px 10px; margin:10px 25px 35px;">{{ oldValue }}</span>
+    </p>
+    <p style="margin:0;">It is now:
+      <span style="display:block; border-left:2px solid #00C853; background-color:#F5F5F5; padding:5px 10px; margin:10px 25px 35px;">{{ newValue }}</span>
+    </p>
   </div>
-  <div style="display:block; font-size:13px; padding:15px; text-align:center; font-weight:bold; border-top: 1px solid #9e9e9e; background-color: #e0e0e0;">
-    <a href="{{ domain }}" style="color:#009688;">Monitor more values</a> &bull; <a href="https://github.com/janka102/webmonitor" style="color:#009688;">Source on GitHub</a> &bull; <a href="{{ domain }}/manage/{{ job.id }}/disable" style="color:#009688;">Stop monitoring this value</a>
-  </div>
+  <p style="font-size:15px; margin:0; padding:15px; text-align:center; border-top: 1px solid #9e9e9e; background-color: #e0e0e0;">
+    <a href="{{ domain }}" style="color:#009688; text-decoration:none;">Monitor more values</a> &bull; <a href="https://github.com/janka102/webmonitor" style="color:#009688; text-decoration:none;">Source on GitHub</a> &bull; <a href="{{ domain }}/manage/{{ job.id }}" style="color:#009688; text-decoration:none;">Manage this monitored value</a>
+  </p>
 </div>
