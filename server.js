@@ -7,7 +7,6 @@ const compression = require('compression');
 const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
 const path = require('path');
-const util = require('util');
 const config = require('./config.js');
 const database = require('./database.js');
 
