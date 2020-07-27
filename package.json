@@ -2,7 +2,7 @@
   "private": true,
   "name": "webmonitor",
   "description": "Monitor values on the web, and get emailed when they change",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Jesse Smick",
   "repository": {
     "type": "git",
@@ -15,19 +15,19 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
-    "dotenv": "^7.0.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "later": "^1.2.0",
     "lodash": ">=4.17.19",
-    "mongoose": "^5.7.5",
-    "morgan": ">=1.9.1",
-    "nodemailer": "^6.4.2",
+    "mongoose": "^5.9.25",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.4.10",
     "nodemailer-html-to-text": "^3.1.0",
-    "nunjucks": "^3.2.0",
-    "pify": "^4.0.1",
-    "puppeteer": "^1.20.0"
+    "nunjucks": "^3.2.2",
+    "pify": "^5.0.0",
+    "puppeteer": "^5.2.1"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.4"
   }
 }
