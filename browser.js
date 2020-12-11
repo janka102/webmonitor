@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const config = require('./config.js');
 
-exports = module.exports = {
+Object.assign(exports, {
   async execute(job) {
     const browser = await puppeteer.launch({ args: config.puppeteer_args });
     const page = await browser.newPage();
@@ -56,4 +56,4 @@ exports = module.exports = {
       kind: typeof result === 'string' ? 'text' : 'number'
     };
   }
-};
+});

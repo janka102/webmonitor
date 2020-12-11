@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const config = require('./config.js');
 
-module.exports = {
+Object.assign(exports, {
   init(cb) {
     mongoose.connect(
       config.mongoose,
@@ -50,4 +50,4 @@ module.exports = {
       cb(null);
     });
   }
-};
+});
