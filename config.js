@@ -3,7 +3,7 @@ Object.assign(exports, {
   production: process.env.NODE_ENV === 'production',
   port: process.env.PORT || 3000,
   domain: process.env.MONITOR_DOMAIN,
-  mongoose: process.env.MONGOOSE_URL || `mongodb://localhost:21017/webmonitor`,
+  mongoose: process.env.MONGOOSE_URL || `mongodb://localhost:27017/webmonitor`,
   puppeteer_args: process.env.PUPPETEER_ARGS
     ? process.env.PUPPETEER_ARGS.split(' ')
     : [],
